@@ -85,3 +85,7 @@ backend/cropped_receipts/
 # backend/screenshots/
 # backend/uploads/
 # backend/reports/
+
+# Project-specific excludes
+MaterialCorrectSystem_移植說明.md
+.claude/
