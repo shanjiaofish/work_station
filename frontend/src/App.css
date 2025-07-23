@@ -1,0 +1,631 @@
+/* frontend/src/App.css */
+
+/* 容器只負責結構，不帶任何樣式 */
+.container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.header h1 {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+  color: var(--text-main-dark); /* 更新標題顏色 */
+}
+
+.description {
+  font-size: 1.1rem;
+  color: var(--text-main-light); /* 更新描述文字顏色 */
+}
+
+/* 將上傳和結果區塊變成白色卡片 */
+.upload-section,
+.results-section {
+  background: var(--bg-container); /* 使用白色背景 */
+  padding: 2rem;
+  border-radius: var(--border-radius);
+  margin-bottom: 1.5rem;
+  border: 1px solid var(--border-color); /* 使用新的邊框顏色 */
+  box-shadow: var(--shadow-light); /* 加上細微陰影 */
+}
+
+.loading-indicator, .error-message {
+  text-align: center;
+  padding: 2rem;
+  font-size: 1.2rem;
+  color: var(--text-main-light); /* 更新提示文字顏色 */
+}
+
+.error-message {
+  color: #e74c3c;
+}
+
+.action-bar {
+  text-align: right;
+  margin-top: 1.5rem;
+}
+.gmap-page .container {
+    max-width: 900px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+}
+
+.gmap-page .header h1 {
+    font-size: 2.5rem; /* 放大標題 */
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: #1a202c;
+}
+
+.gmap-page .header .description {
+    font-size: 1.1rem; /* 放大描述文字 */
+    color: #4a5568;
+    margin-bottom: 2rem;
+}
+
+/* --- 輸入區塊 --- */
+.gmap-page .input-section {
+    background-color: #f7fafc;
+    padding: 1.5rem;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+}
+
+.gmap-page .form-group {
+    margin-bottom: 1.5rem;
+}
+
+.gmap-page .form-group label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+    color: #2d3748;
+}
+
+.gmap-page .form-control {
+    width: 100%;
+    padding: 0.8rem 1rem; /* 加大內距 */
+    font-size: 1.1rem; /* 加大輸入字體 */
+    border: 1px solid #cbd5e0;
+    border-radius: 6px;
+    transition: all 0.2s ease-in-out;
+    box-sizing: border-box; /* 確保 padding 不會撐爆寬度 */
+}
+
+.gmap-page .form-control:focus {
+    outline: none;
+    border-color: #4299e1;
+    box-shadow: 0 0 0 2px rgba(66, 153, 225, 0.5);
+}
+
+.gmap-page .btn-primary {
+    width: 100%;
+    padding: 0.9rem 1rem;
+    font-size: 1.2rem;
+    font-weight: 600;
+    background-color: #2c5282;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.gmap-page .btn-primary:hover:not(:disabled) {
+    background-color: #2a4365;
+}
+
+.gmap-page .btn-primary:disabled {
+    background-color: #a0aec0;
+    cursor: not-allowed;
+}
+
+
+/* --- 結果區塊 --- */
+.gmap-page .results-section {
+    margin-top: 2.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #e2e8f0;
+}
+
+.gmap-page .results-section h2 {
+    font-size: 1.8rem;
+    margin-bottom: 1.5rem;
+}
+
+.gmap-page .results-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1.5rem;
+}
+
+.gmap-page .result-card {
+    background-color: #fdfdfd;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 1rem;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.gmap-page .result-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.08);
+}
+
+.gmap-page .result-card h4 {
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+    word-wrap: break-word;
+}
+
+.gmap-page .result-card p {
+    font-size: 1rem;
+    color: #4a5568;
+    margin-bottom: 1rem;
+}
+
+.gmap-page .screenshot-preview {
+    width: 100%;
+    max-width: 220px; /* 限制圖片最大寬度，讓它變小 */
+    height: auto;
+    border-radius: 6px; /* 圖片圓角 */
+    border: 1px solid #e2e8f0;
+    margin-bottom: 0.5rem;
+}
+
+/* --- 提示訊息 --- */
+.gmap-page .loading-indicator,
+.gmap-page .error-message {
+    text-align: center;
+    padding: 1rem;
+    margin-top: 1.5rem;
+    border-radius: 6px;
+    font-size: 1.1rem;
+}
+
+.gmap-page .loading-indicator {
+    background-color: #ebf8ff;
+    color: #3182ce;
+}
+
+.gmap-page .error-message {
+    background-color: #fff5f5;
+    color: #c53030;
+}
+.gmap-page .action-panel {
+    margin-top: 8rem;
+    padding: 1.5rem;
+    background-color: #f7fafc; /* 使用更柔和的背景色 */
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.gmap-page .action-panel h3 {
+    margin-top: 0;
+    margin-bottom: 1.5rem; /* 增加與按鈕的間距 */
+    color: #2d3748; /* 深灰色文字 */
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.gmap-page .download-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem; /* 拉開按鈕間距 */
+    flex-wrap: wrap;
+}
+
+.gmap-page .btn-download {
+    padding: 0.7rem 1.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    border: 2px solid transparent; /* 預留邊框位置 */
+    border-radius: 8px; /* 更圓潤的邊角 */
+    cursor: pointer;
+    transition: all 0.3s ease; /* 流暢的過渡動畫 */
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background-color: transparent; /* 預設透明背景 */
+}
+
+/* Excel 按鈕樣式 */
+.gmap-page .btn-download.excel {
+    border-color: #217346; /* 綠色邊框 */
+    color: #217346; /* 綠色文字 */
+}
+.gmap-page .btn-download.excel:hover {
+    background-color: #217346; /* 滑鼠移入時，背景變綠色 */
+    color: white; /* 文字變白色 */
+    transform: translateY(-2px); /* 輕微上浮效果 */
+    box-shadow: 0 4px 12px rgba(33, 115, 70, 0.2);
+}
+
+/* Zip 按鈕樣式 */
+.gmap-page .btn-download.zip {
+    border-color: #b98900; /* 黃色邊框 */
+    color: #b98900; /* 黃色文字 */
+}
+.gmap-page .btn-download.zip:hover {
+    background-color: #b98900; /* 滑鼠移入時，背景變黃色 */
+    color: white; /* 文字變白色 */
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(185, 137, 0, 0.2);
+}
+
+/* --- OCR 頁面專屬樣式 --- */
+.ocr-page .container {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+}
+
+.ocr-page .header h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: #1a202c;
+}
+
+.ocr-page .header .description {
+    font-size: 1.1rem;
+    color: #4a5568;
+    margin-bottom: 2rem;
+}
+
+.ocr-page .upload-box {
+    border: 3px dashed #cbd5e0;
+    border-radius: 12px;
+    padding: 3rem 2rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    background-color: #f7fafc;
+    margin-top: 2rem;
+}
+
+.ocr-page .upload-box:hover,
+.ocr-page .upload-box.drag-over {
+    border-color: #4299e1;
+    background-color: #ebf8ff;
+    transform: scale(1.02);
+}
+
+.ocr-page .upload-icon,
+.ocr-page .file-icon {
+    font-size: 3rem;
+    display: block;
+    margin-bottom: 1rem;
+    color: #4299e1;
+}
+
+.ocr-page .upload-placeholder p,
+.ocr-page .file-selected strong {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin: 0;
+    color: #2d3748;
+}
+
+.ocr-page .file-selected p {
+    font-size: 1rem;
+    color: #4a5568;
+    margin: 0.5rem 0;
+    word-break: break-all;
+}
+
+.ocr-page .upload-placeholder small,
+.ocr-page .file-selected small {
+    color: #718096;
+}
+
+.ocr-page .btn-process {
+    width: 100%;
+    margin-top: 1.5rem;
+    padding: 0.9rem 1rem;
+    font-size: 1.2rem;
+    font-weight: 600;
+    background-color: #2c5282;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.ocr-page .btn-process:hover:not(:disabled) {
+    background-color: #2a4365;
+}
+
+.ocr-page .btn-process:disabled {
+    background-color: #a0aec0;
+    cursor: not-allowed;
+}
+
+.ocr-page .error-message {
+    text-align: center;
+    padding: 1rem;
+    margin-top: 1.5rem;
+    border-radius: 6px;
+    font-size: 1.1rem;
+    background-color: #fff5f5;
+    color: #c53030;
+}
+
+.ocr-page .download-section {
+    margin-top: 2rem;
+    padding: 1.5rem;
+    background-color: #f0fff4;
+    border: 1px solid #9ae6b4;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.ocr-page .download-section h3 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    color: #2f855a;
+    font-size: 1.5rem;
+}
+
+.ocr-page .btn-download-report {
+    padding: 0.7rem 1.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background-color: #2f855a;
+    color: white;
+    text-decoration: none;
+}
+
+.ocr-page .btn-download-report:hover {
+    background-color: #276749;
+}
+.ocr-page .results-section {
+    margin-top: 2.5rem;
+}
+
+.ocr-page .results-section h2 {
+    text-align: center;
+    font-size: 1.8rem;
+    margin-bottom: 1.5rem;
+    color: #2d3748;
+}
+
+.ocr-page .table-container {
+    overflow-x: auto; /* 在小螢幕上可以水平滾動 */
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+}
+
+.ocr-page .ocr-results-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.95rem;
+}
+
+.ocr-page .ocr-results-table th,
+.ocr-page .ocr-results-table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.ocr-page .ocr-results-table th {
+    background-color: #f7fafc;
+    font-weight: 600;
+    color: #4a5568;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.ocr-page .ocr-results-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.ocr-page .ocr-results-table tbody tr:hover {
+    background-color: #f7fafc;
+}
+
+.ocr-page .ocr-results-table td {
+    color: #2d3748;
+    word-break: break-word;
+}
+
+/* --- CarbonMatchPage 頁面專屬樣式 --- */
+.carbon-match-page .container {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+}
+
+.carbon-match-page .header h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: #1a202c;
+}
+
+.carbon-match-page .header .description {
+    font-size: 1.1rem;
+    color: #4a5568;
+    margin-bottom: 2rem;
+}
+
+.carbon-match-page .input-section {
+    background-color: #f7fafc;
+    padding: 1.5rem;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+    margin-bottom: 1.5rem;
+}
+
+.carbon-match-page .usage-instructions {
+    margin-bottom: 1.5rem;
+}
+
+.carbon-match-page .usage-instructions h3 {
+    color: #2d3748;
+    font-size: 1.2rem;
+    margin-bottom: 0.8rem;
+}
+
+.carbon-match-page .usage-instructions ol {
+    color: #4a5568;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    padding-left: 1.5rem;
+}
+
+.carbon-match-page .usage-instructions li {
+    margin-bottom: 0.5rem;
+}
+
+.carbon-match-page .upload-area {
+    text-align: center;
+    padding: 1.5rem;
+    border: 2px dashed #cbd5e0;
+    border-radius: 8px;
+    background-color: #ffffff;
+    transition: all 0.2s ease-in-out;
+}
+
+.carbon-match-page .upload-area:hover {
+    border-color: #4299e1;
+    background-color: #ebf8ff;
+}
+
+.carbon-match-page .btn {
+    padding: 0.8rem 1.5rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-block;
+    text-decoration: none;
+}
+
+.carbon-match-page .btn-primary {
+    background-color: #2c5282;
+    color: white;
+}
+
+.carbon-match-page .btn-primary:hover:not(.disabled) {
+    background-color: #2a4365;
+}
+
+.carbon-match-page .btn-primary.disabled {
+    background-color: #a0aec0;
+    cursor: not-allowed;
+}
+
+.carbon-match-page .file-status {
+    margin-top: 1rem;
+}
+
+.carbon-match-page .file-name {
+    color: #2f855a;
+    font-size: 0.95rem;
+    font-weight: 500;
+}
+
+.carbon-match-page .loading-indicator {
+    text-align: center;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+    background-color: #ebf8ff;
+    color: #3182ce;
+    border-radius: 8px;
+    font-size: 1.1rem;
+}
+
+.carbon-match-page .loading-indicator small {
+    display: block;
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+    opacity: 0.8;
+}
+
+.carbon-match-page .error-message {
+    text-align: center;
+    padding: 1rem;
+    margin: 1.5rem 0;
+    background-color: #fff5f5;
+    color: #c53030;
+    border-radius: 6px;
+    font-size: 1rem;
+}
+
+.carbon-match-page .info-section {
+    background-color: #fff9e6;
+    padding: 1.5rem;
+    border-radius: 8px;
+    border: 1px solid #f7d794;
+    margin-top: 2rem;
+}
+
+.carbon-match-page .info-section h3 {
+    color: #856404;
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+}
+
+.carbon-match-page .info-section ul {
+    color: #856404;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    padding-left: 1.5rem;
+    margin: 0;
+}
+
+.carbon-match-page .info-section li {
+    margin-bottom: 0.5rem;
+}
+
+/* 響應式設計 */
+@media (max-width: 768px) {
+    .carbon-match-page .container {
+        margin: 1rem;
+        padding: 1.5rem;
+    }
+    
+    .carbon-match-page .header h1 {
+        font-size: 2rem;
+    }
+    
+    .carbon-match-page .upload-area {
+        padding: 1rem;
+    }
+    
+    .carbon-match-page .btn {
+        padding: 0.7rem 1.2rem;
+        font-size: 1rem;
+    }
+}

@@ -1,0 +1,98 @@
+/* 來源: MaterialCorrectSystem/frontend/src/App.css */
+/* ===== 按鈕、區塊等通用樣式 ===== */
+.upload-section,
+.results-section {
+  background: var(--secondary-bg-color);
+  padding: 1.5rem;
+  border-radius: var(--border-radius);
+  margin-bottom: 1.5rem;
+  border: 1px solid #495057;
+}
+
+.upload-label, button.primary-button {
+  display: inline-block;
+  background: var(--accent-color);
+  color: #fff;
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: background-color 0.2s, opacity 0.2s;
+  border: none;
+  font-weight: 600;
+}
+
+.upload-label:hover, button.primary-button:hover {
+  opacity: 0.85;
+}
+
+.upload-label.disabled, button.primary-button:disabled {
+  background-color: #555;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+input[type="file"] {
+  display: none;
+}
+
+.file-name {
+  margin-left: 1rem;
+  font-size: 1rem;
+  color: var(--secondary-text-color);
+}
+
+.action-bar {
+  text-align: right;
+  margin-top: 1.5rem;
+}
+
+/* 來源: MaterialCorrectSystem/frontend/src/components/MatchTable.css */
+/* ===== 表格樣式 ===== */
+.match-table {
+  width: 100%;
+  border-collapse: collapse;
+  overflow: hidden;
+  border-radius: var(--border-radius);
+  background-color: var(--secondary-bg-color);
+}
+
+.match-table th,
+.match-table td {
+  border: 1px solid #495057;
+  padding: 1rem;
+  text-align: left;
+}
+
+.match-table th {
+  background-color: #495057;
+  font-weight: 600;
+}
+
+.match-cell {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+/* ===== 下拉選單(react-select)樣式 ===== */
+.match-select {
+  flex-grow: 1;
+}
+.match-select__control {
+  background-color: var(--main-bg-color) !important;
+  border-color: #495057 !important;
+}
+.match-select__single-value, .match-select__input-text {
+  color: var(--primary-text-color) !important;
+}
+.match-select__menu {
+  background-color: var(--secondary-bg-color) !important;
+}
+.match-select__option:hover {
+  background-color: var(--accent-color) !important;
+}
+.match-select__option--is-focused {
+   background-color: #0069d9 !important;
+}
+
+/* ... 你可以繼續從舊檔案把其他需要的樣式加進來 ... */

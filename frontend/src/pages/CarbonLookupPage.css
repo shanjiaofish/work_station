@@ -1,0 +1,281 @@
+/* CarbonLookupPage.css - 統一設計風格的碳係數查詢頁面 */
+
+.carbon-lookup-page .container {
+    max-width: 900px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+}
+
+.carbon-lookup-page .header h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: #1a202c;
+}
+
+.carbon-lookup-page .header .description {
+    font-size: 1.1rem;
+    color: #4a5568;
+    margin-bottom: 2rem;
+}
+
+/* 輸入區塊 */
+.carbon-lookup-page .input-section {
+    background-color: #f7fafc;
+    padding: 1.5rem;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+    margin-bottom: 1.5rem;
+}
+
+.carbon-lookup-page .form-group {
+    margin-bottom: 1rem;
+}
+
+.carbon-lookup-page .form-group label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+    color: #2d3748;
+}
+
+.carbon-lookup-page .search-input-container {
+    position: relative;
+}
+
+.carbon-lookup-page .form-control {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    font-size: 1.1rem;
+    border: 1px solid #cbd5e0;
+    border-radius: 6px;
+    transition: all 0.2s ease-in-out;
+    box-sizing: border-box;
+}
+
+.carbon-lookup-page .form-control:focus {
+    outline: none;
+    border-color: #4299e1;
+    box-shadow: 0 0 0 2px rgba(66, 153, 225, 0.5);
+}
+
+/* 下拉建議選單 */
+.carbon-lookup-page .dropdown-suggestions {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: #ffffff;
+    border: 1px solid #cbd5e0;
+    border-top: none;
+    border-radius: 0 0 6px 6px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.carbon-lookup-page .suggestion-item {
+    padding: 12px 16px;
+    cursor: pointer;
+    border-bottom: 1px solid #e2e8f0;
+    transition: background 0.2s ease;
+    color: #2d3748;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.carbon-lookup-page .suggestion-item:hover {
+    background: #f7fafc;
+}
+
+.carbon-lookup-page .suggestion-item:last-child {
+    border-bottom: none;
+}
+
+/* 搜索統計 */
+.carbon-lookup-page .search-stats {
+    margin-top: 1rem;
+    color: #4a5568;
+    font-size: 0.95rem;
+}
+
+.carbon-lookup-page .search-stats p {
+    margin: 0;
+}
+
+.carbon-lookup-page .search-stats strong {
+    color: #2d3748;
+}
+
+/* 結果區塊 */
+.carbon-lookup-page .results-section {
+    margin-top: 2rem;
+    padding: 1.5rem;
+    background-color: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+}
+
+.carbon-lookup-page .results-section h2 {
+    font-size: 1.8rem;
+    margin-bottom: 1.5rem;
+    color: #2d3748;
+    text-align: center;
+}
+
+/* 表格容器 */
+.carbon-lookup-page .table-container {
+    overflow-x: auto;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+}
+
+.carbon-lookup-page .materials-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.95rem;
+    min-width: 800px;
+}
+
+.carbon-lookup-page .materials-table th,
+.carbon-lookup-page .materials-table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.carbon-lookup-page .materials-table th {
+    background-color: #f7fafc;
+    font-weight: 600;
+    color: #4a5568;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.carbon-lookup-page .materials-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.carbon-lookup-page .materials-table tbody tr:hover {
+    background-color: #f7fafc;
+}
+
+.carbon-lookup-page .materials-table td {
+    color: #2d3748;
+    word-break: break-word;
+}
+
+/* 特殊欄位樣式 */
+.carbon-lookup-page .material-name {
+    font-weight: 500;
+    color: #3182ce;
+    max-width: 200px;
+}
+
+.carbon-lookup-page .carbon-value {
+    color: #2f855a;
+    font-weight: 500;
+    background: #f0fff4;
+    padding: 4px 8px;
+    border-radius: 4px;
+    display: inline-block;
+    min-width: 80px;
+    text-align: center;
+}
+
+.carbon-lookup-page .year-value {
+    color: #3182ce;
+    font-weight: 500;
+    background: #ebf8ff;
+    padding: 4px 8px;
+    border-radius: 4px;
+    display: inline-block;
+    min-width: 60px;
+    text-align: center;
+}
+
+/* 載入指示器和錯誤訊息 */
+.carbon-lookup-page .loading-indicator {
+    text-align: center;
+    padding: 1rem;
+    color: #3182ce;
+    background-color: #ebf8ff;
+    border-radius: 6px;
+    margin: 1rem 0;
+}
+
+.carbon-lookup-page .error-message {
+    text-align: center;
+    padding: 1rem;
+    color: #c53030;
+    background-color: #fff5f5;
+    border-radius: 6px;
+    margin: 1rem 0;
+}
+
+/* 滾動條樣式 */
+.carbon-lookup-page .dropdown-suggestions::-webkit-scrollbar,
+.carbon-lookup-page .table-container::-webkit-scrollbar {
+    width: 6px;
+    height: 8px;
+}
+
+.carbon-lookup-page .dropdown-suggestions::-webkit-scrollbar-track,
+.carbon-lookup-page .table-container::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+.carbon-lookup-page .dropdown-suggestions::-webkit-scrollbar-thumb,
+.carbon-lookup-page .table-container::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 4px;
+}
+
+.carbon-lookup-page .dropdown-suggestions::-webkit-scrollbar-thumb:hover,
+.carbon-lookup-page .table-container::-webkit-scrollbar-thumb:hover {
+    background: #a1a1a1;
+}
+
+/* 響應式設計 */
+@media (max-width: 768px) {
+    .carbon-lookup-page .container {
+        margin: 1rem;
+        padding: 1.5rem;
+    }
+    
+    .carbon-lookup-page .header h1 {
+        font-size: 2rem;
+    }
+    
+    .carbon-lookup-page .materials-table {
+        font-size: 0.85rem;
+        min-width: 600px;
+    }
+    
+    .carbon-lookup-page .materials-table th,
+    .carbon-lookup-page .materials-table td {
+        padding: 8px 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .carbon-lookup-page .header h1 {
+        font-size: 1.8rem;
+    }
+    
+    .carbon-lookup-page .materials-table {
+        min-width: 500px;
+    }
+    
+    .carbon-lookup-page .suggestion-item {
+        padding: 10px 12px;
+        font-size: 13px;
+    }
+}

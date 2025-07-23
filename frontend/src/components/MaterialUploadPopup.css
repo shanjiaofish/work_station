@@ -1,0 +1,145 @@
+/* ===== Global & Variables ===== */
+:root {
+  --primary-color: #4f46e5;    /* Indigo-600 */
+  --primary-hover: #4338ca;    /* Indigo-700 */
+  --bg-light: #f9fafb;         /* Gray-50 */
+  --text-dark: #1f2937;        /* Gray-800 */
+  --text-muted: #6b7280;       /* Gray-500 */
+  --border-radius: 0.5rem;     /* 8px */
+  --spacing: 1rem;             /* 16px */
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+  --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+/* ===== Reset & Layout ===== */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+html, body {
+  margin: 0;
+}
+body {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  background: var(--bg-light);
+  padding: var(--spacing) 0;
+}
+.popup-overlay {
+  position: fixed; top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.4);
+  display: flex; align-items: center; justify-content: center;
+}
+.popup-content {
+  background: #fff;
+  padding: var(--spacing);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-md);
+  width: 90%;
+  max-width: 400px;
+  position: relative;
+}
+
+.material-upload-trigger {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  padding: 0.75rem 1.5rem;         /* 水平与垂直内边距 */
+  min-width: 120px;               /* 最小宽度，根据文字长短调整 */
+  height: auto;
+  border-radius: 1rem;            /* 圆角矩形 */
+  background: var(--primary-color);
+  color: #fff;
+  font-size: 1rem;                /* 文字大小 */
+  line-height: 1.2;
+  border: none;
+  cursor: pointer;
+  box-shadow: var(--shadow-md);
+  transition: background 0.2s, transform 0.1s;
+}
+.material-upload-trigger:hover {
+  background: var(--primary-hover);
+  transform: translateY(-1px);
+}
+
+/* ===== Close Button ===== */
+.popup-close {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: var(--text-muted);
+}
+
+/* ===== Form Controls ===== */
+.popup-content h2 {
+  margin-bottom: var(--spacing);
+  color: var(--text-dark);
+  text-align: center;
+}
+.popup-content form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing);
+}
+.popup-content label {
+  font-size: 0.9rem;
+  color: var(--text-dark);
+}
+.popup-content input,
+.popup-content textarea {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #d1d5db;
+  border-radius: var(--border-radius);
+  font-size: 0.9rem;
+  color: var(--text-dark);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.popup-content input:focus,
+.popup-content textarea:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(79,70,229,0.2);
+}
+.popup-content input[type="checkbox"] {
+  width: auto;
+  margin-right: 0.5rem;
+}
+
+/* ===== Actions ===== */
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--spacing);
+}
+.actions button {
+  background: var(--primary-color);
+  color: #fff;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+  box-shadow: var(--shadow-sm);
+}
+.actions button:hover {
+  background: var(--primary-hover);
+  transform: translateY(-1px);
+}
+.actions button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ===== Error Message ===== */
+.error {
+  color: red;
+  font-size: 0.85rem;
+  text-align: center;
+}
