@@ -186,12 +186,6 @@ CREATE TABLE materials (
 
 此專案採用 MIT 授權條款 - 詳見 [LICENSE](LICENSE) 檔案
 
-## 📞 聯絡資訊
-
-如有任何問題或建議，請通過以下方式聯絡：
-
-- 專案Issues: [GitHub Issues](https://github.com/your-username/work-station/issues)
-- Email: your-email@example.com
 
 ## 🙏 致謝
 
