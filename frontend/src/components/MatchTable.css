@@ -1,0 +1,181 @@
+/* MatchTable.css - MaterialCorrectSystem Style */
+
+.match-table {
+  width: 100%;
+  border-collapse: collapse;
+  overflow: visible; /* 允许子元素溢出 */
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.match-table th,
+.match-table td {
+  border: 1px solid #e5e7eb;
+  padding: 12px 8px;
+  text-align: left;
+  vertical-align: middle;
+}
+
+/* 表頭樣式優化 */
+.match-table thead {
+  background: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%);
+  color: white;
+}
+
+.match-table th {
+  font-weight: 600;
+  font-size: 0.9rem;
+  letter-spacing: 0.025em;
+  text-align: center;
+}
+
+/* 列寬度設置 */
+.col-original {
+  width: 15%;
+  min-width: 120px;
+}
+
+.col-suggestions {
+  width: 45%;
+  min-width: 300px;
+}
+
+.col-selected {
+  width: 20%;
+  min-width: 150px;
+}
+
+.col-unit {
+  width: 10%;
+  min-width: 80px;
+  text-align: center;
+}
+
+.col-carbon {
+  width: 10%;
+  min-width: 100px;
+  text-align: center;
+}
+
+/* 表格內容樣式 */
+.match-table tbody tr:nth-child(even) {
+  background-color: #f9fafb;
+}
+
+.match-table tbody tr:hover {
+  background-color: #f3f4f6;
+}
+
+.match-cell {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.match-select {
+  flex-grow: 1;
+}
+
+.match-select__control {
+  height: 100%;
+  border-color: #d1d5db;
+  border-radius: 0.375rem;
+  padding: 0;
+}
+
+.match-select__value-container {
+  padding: 0 8px;
+}
+
+.match-select__input {
+  margin: 0;
+}
+
+.match-select__single-value {
+  margin: 0;
+}
+
+.toggle-btn-advanced {
+  white-space: nowrap;
+  flex-shrink: 0;
+  padding: 6px 10px;
+  border: 2px solid #f59e0b;
+  border-radius: 6px;
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: white;
+  cursor: pointer;
+  font-size: 0.75rem;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(245, 158, 11, 0.2);
+}
+
+.toggle-btn-advanced:hover {
+  background: linear-gradient(135deg, #d97706, #b45309);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(245, 158, 11, 0.3);
+}
+
+.toggle-btn-original {
+  white-space: nowrap;
+  flex-shrink: 0;
+  padding: 6px 10px;
+  border: 2px solid #4f46e5;
+  border-radius: 6px;
+  background: linear-gradient(135deg, #4f46e5, #4338ca);
+  color: white;
+  cursor: pointer;
+  font-size: 0.75rem;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(79, 70, 229, 0.2);
+}
+
+.toggle-btn-original:hover {
+  background: linear-gradient(135deg, #4338ca, #3730a3);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(79, 70, 229, 0.3);
+}
+
+/* React-Select 樣式優化 */
+.match-select__control {
+  border: 2px solid #e5e7eb !important;
+  border-radius: 6px !important;
+  box-shadow: none !important;
+  transition: all 0.2s ease !important;
+}
+
+.match-select__control:hover {
+  border-color: #d1d5db !important;
+}
+
+.match-select__control--is-focused {
+  border-color: #4f46e5 !important;
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1) !important;
+}
+
+.match-select__menu {
+  border-radius: 6px !important;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important;
+  border: 1px solid #e5e7eb !important;
+}
+
+.match-select__option {
+  padding: 8px 12px !important;
+  font-size: 0.875rem !important;
+}
+
+.match-select__option--is-focused {
+  background-color: #f3f4f6 !important;
+  color: #1f2937 !important;
+}
+
+.match-select__option--is-selected {
+  background-color: #4f46e5 !important;
+}
+
+.match-select__placeholder {
+  color: #9ca3af !important;
+  font-size: 0.875rem !important;
+}

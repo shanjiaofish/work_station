@@ -1,0 +1,21 @@
+# 現有套件 (OCR和其他功能)
+flask
+flask-cors
+pandas
+openpyxl
+googlemaps
+supabase
+cv2
+numpy
+cnocr
+easyocr
+pdf2image
+paddleocr
+werkzeug
+
+# 新增的Selenium相關套件
+selenium
+webdriver-manager
+
+# 其他實用套件
+urllib3

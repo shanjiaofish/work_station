@@ -17,6 +17,7 @@ import werkzeug.utils
 # --- 功能性套件 ---
 import googlemaps
 from supabase_client import supabase
+from gmap_robot import GoogleMapsRobot
 
 # --- OCR 相關套件 ---
 import cv2
@@ -39,7 +40,7 @@ except AttributeError:
 # --- 應用程式初始化與設定 (只需一次) ---
 # ======================================================================
 app = Flask(__name__)
-CORS(app)
+CORS(app, origins=['http://localhost:5174', 'http://127.0.0.1:5174', 'http://localhost:5173', 'http://127.0.0.1:5173'])
 
 # --- 路徑設定 ---
 basedir = os.path.abspath(os.path.dirname(__file__))
@@ -228,10 +229,22 @@ def match_materials_batch():
             # 使用正確的欄位名稱進行搜尋
             response = supabase.table('materials').select('material_id, material_name, carbon_footprint, declaration_unit').ilike('material_name', f'%{original_name}%').limit(5).execute()
             search_results = response.data if response.data else []
+            
+            # 轉換格式以符合前端期望
+            formatted_matches = []
+            for material in search_results:
+                formatted_matches.append({
+                    "name": material.get('material_name', ''),
+                    "id": material.get('material_id', ''),
+                    "carbon_footprint": material.get('carbon_footprint', 0),
+                    "declaration_unit": material.get('declaration_unit', ''),
+                    "score": 0.8  # 暫時給一個固定分數
+                })
+            
             all_results.append({ 
-                "original_index": index, 
-                "original_name": original_name, 
-                "matches": search_results 
+                "query": original_name,
+                "matches": formatted_matches,
+                "default": 0 if formatted_matches else None
             })
         return jsonify(all_results)
     except Exception as e:
@@ -240,44 +253,44 @@ def match_materials_batch():
 
 @app.route('/api/gmap/process', methods=['POST'])
 def gmap_process_api():
-    if not gmaps: return jsonify({"error": "後端 Google Maps API 金鑰未設定。"}), 500
+    # 使用機器人替代Google Maps API
     data = request.get_json()
     origin, destinations_text = data.get('origin'), data.get('destinations', '')
     if not origin or not destinations_text: return jsonify({"error": "必須提供出發地和目的地。"}), 400
+    
     destinations = [addr.strip() for addr in destinations_text.split('\n') if addr.strip()]
-    results, session_id = [], f"session_{int(time.time())}"
+    session_id = f"session_{int(time.time())}"
     today_str = datetime.datetime.now().strftime("%Y-%m-%d")
     image_folder_path = os.path.join(app.config['SCREENSHOTS_FOLDER'], today_str, session_id)
     os.makedirs(image_folder_path, exist_ok=True)
-    origin_city = get_origin_city(origin)
+    
     try:
-        for idx, original_dest in enumerate(destinations):
-            final_dest = original_dest
-            if not any(char.isdigit() for char in final_dest) and origin_city and origin_city not in final_dest:
-                final_dest = f"{origin_city} {final_dest}"
-            directions_results = gmaps.directions(origin, final_dest, mode="driving", language="zh-TW", alternatives=True)
-            if not directions_results: continue
-            shortest_route = min(directions_results, key=lambda r: r['legs'][0]['distance']['value'])
-            distance_text = shortest_route['legs'][0]['distance']['text']
-            overview_polyline = shortest_route['overview_polyline']['points']
-            image_content = b"".join(gmaps.static_map(
-                size=(600, 400), scale=2, language='zh-TW', maptype='roadmap',
-                path=f'enc:{overview_polyline}', markers=[f'color:red|label:O|{origin}', f'color:blue|label:D|{final_dest}']
-            ))
-            if image_content:
-                safe_dest_name = "".join(c for c in final_dest if c.isalnum())[:20]
-                image_filename = f"map_{idx}_{safe_dest_name}.png"
-                image_path = os.path.join(image_folder_path, image_filename)
-                with open(image_path, 'wb') as f: f.write(image_content)
-                results.append({
-                    "origin": origin, "destination": final_dest, "distance": distance_text,
-                    "image_filename": image_filename, "image_local_path": image_path,
-                    "screenshot_url": f"screenshots/{today_str}/{session_id}/{image_filename}"
-                })
+        # 使用Google Maps機器人
+        robot = GoogleMapsRobot(headless=True)
+        robot_results = robot.process_multiple_routes(origin, destinations, image_folder_path)
+        
+        # 轉換結果格式以符合前端期望
+        results = []
+        for idx, robot_result in enumerate(robot_results):
+            if "image_filename" in robot_result:
+                screenshot_url = f"screenshots/{today_str}/{session_id}/{robot_result['image_filename']}"
+            else:
+                screenshot_url = ""
+            
+            results.append({
+                "origin": robot_result["origin"],
+                "destination": robot_result["destination"], 
+                "distance": robot_result["distance"],
+                "image_filename": robot_result.get("image_filename", ""),
+                "image_local_path": robot_result.get("image_local_path", ""),
+                "screenshot_url": screenshot_url
+            })
+        
         SESSION_RESULTS_CACHE[session_id] = results
         return jsonify({"results": results, "session_id": session_id})
+        
     except Exception as e:
-        print(f"處理 Google Maps API 時發生嚴重錯誤: {e}")
+        print(f"處理 Google Maps 機器人時發生嚴重錯誤: {e}")
         return jsonify({"error": f"處理時發生嚴重錯誤: {e}"}), 500
 
 @app.route('/api/download/excel/<session_id>', methods=['GET'])

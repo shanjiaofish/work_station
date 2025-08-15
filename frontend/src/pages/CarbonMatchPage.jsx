@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import * as XLSX from 'xlsx';
 import { useNavigate } from 'react-router-dom';
-import { MATERIAL_API_BASE } from '../api/config';
+import { API_BASE } from '../api/config';
 import '../App.css';
 
 function CarbonMatchPage() {
@@ -25,16 +25,17 @@ function CarbonMatchPage() {
         try {
             const reader = new FileReader();
             reader.onload = async (evt) => {
-                const wb = XLSX.read(evt.target.result, { type: 'binary' });
-                const sheet = wb.Sheets[wb.SheetNames[0]];
-                const data = XLSX.utils.sheet_to_json(sheet);
+                try {
+                    const wb = XLSX.read(evt.target.result, { type: 'binary' });
+                    const sheet = wb.Sheets[wb.SheetNames[0]];
+                    const data = XLSX.utils.sheet_to_json(sheet);
                 
                 // 提取材料名稱進行批量匹配
                 const queries = data.map(row => row['材料名稱'] || row['name'] || row[Object.keys(row)[0]]);
                 
                 try {
-                    // 設定 5 秒超時
-                    const response = await axios.post(`${MATERIAL_API_BASE}/materials/match-batch`, queries, {
+                    // 設定 5 秒超時，使用正確的 API 端點
+                    const response = await axios.post(`${API_BASE}/materials/match-batch`, queries, {
                         timeout: 5000
                     });
                     
@@ -63,7 +64,21 @@ function CarbonMatchPage() {
                         }
                     });
                 }
+                } catch (parseError) {
+                    console.error('Excel 檔案解析錯誤:', parseError);
+                    setError('檔案解析失敗，請確認這是一個有效的 Excel 檔案。');
+                    setIsLoading(false);
+                    setUploaded(false);
+                }
             };
+            
+            reader.onerror = () => {
+                console.error('檔案讀取錯誤');
+                setError('檔案讀取失敗，請重新選擇檔案。');
+                setIsLoading(false);
+                setUploaded(false);
+            };
+            
             reader.readAsArrayBuffer(file);
         } catch (err) {
             console.error('處理檔案時發生錯誤:', err);
@@ -72,28 +87,28 @@ function CarbonMatchPage() {
         }
     };
 
+
     return (
         <div className="carbon-match-page">
             <div className="container">
-                <header className="header">
+                <header className="main-header">
                     <h1><span role="img" aria-label="document">🧾</span> 材料比對工具</h1>
                     <p className="description">
-                        上傳材料清單，系統將自動比對資料庫中最相似的標準材料，並提供碳排放數據。
+                        上傳您的材料清單，系統將自動比對資料庫中最相似的標準材料，並提供詳細的碳排放數據分析。
                     </p>
                 </header>
 
-                <section className="input-section">
-                    <div className="usage-instructions">
-                        <h3>📋 使用方式</h3>
-                        <ol>
-                            <li>點擊「上傳檔案」選擇包含材料名稱的 Excel 檔案</li>
-                            <li>系統將自動使用 BM25 算法進行智能匹配</li>
-                            <li>跳轉到結果頁面查看匹配結果</li>
-                            <li>可在結果頁面進行進階搜尋和手動選擇</li>
-                            <li>確認後下載包含碳排放數據的完整結果</li>
-                        </ol>
-                    </div>
+                <section className="usage-instructions">
+                    <h3>使用說明</h3>
+                    <ol>
+                        <li>選擇包含材料名稱的 Excel 檔案</li>
+                        <li>系統會自動使用 BM25 算法進行材料匹配</li>
+                        <li>檢視匹配結果並選擇最合適的材料</li>
+                        <li>下載完整的碳排放數據報告</li>
+                    </ol>
+                </section>
 
+                <section className="input-section">
                     <div className="upload-area">
                         <input
                             id="file-upload"
@@ -107,14 +122,12 @@ function CarbonMatchPage() {
                             htmlFor="file-upload" 
                             className={`btn btn-primary ${isLoading ? 'disabled' : ''}`}
                         >
-                            {isLoading ? '處理中...' : (uploaded ? '重新上傳檔案' : '上傳 Excel 檔案')}
+                            {isLoading ? '處理中...' : (uploaded ? '重新上傳檔案' : '選擇 Excel 檔案')}
                         </label>
                         
                         {uploaded && !isLoading && (
                             <div className="file-status">
-                                <span className="file-name">
-                                    ✅ 已上傳: {fileName}
-                                </span>
+                                <span className="file-name">已選擇: {fileName}</span>
                             </div>
                         )}
                     </div>
@@ -122,8 +135,7 @@ function CarbonMatchPage() {
 
                 {isLoading && (
                     <div className="loading-indicator">
-                        <div>🔄 正在使用 BM25 算法進行智能匹配...</div>
-                        <small>請稍候，系統正在分析您的材料清單</small>
+                        正在進行材料匹配分析，請稍候...
                     </div>
                 )}
 
@@ -134,12 +146,11 @@ function CarbonMatchPage() {
                 )}
 
                 <section className="info-section">
-                    <h3>📋 Excel 檔案格式要求</h3>
+                    <h3>檔案格式要求</h3>
                     <ul>
-                        <li>檔案格式：.xlsx 或 .xls</li>
-                        <li>第一列應包含材料名稱（欄位名稱可為：材料名稱、name 或任意名稱）</li>
-                        <li>系統會自動讀取第一個工作表的資料</li>
-                        <li>建議材料名稱越詳細越好，以提高匹配準確度</li>
+                        <li>支援 .xlsx 或 .xls 格式</li>
+                        <li>第一列應包含材料名稱</li>
+                        <li>材料名稱越詳細，匹配準確度越高</li>
                     </ul>
                 </section>
             </div>

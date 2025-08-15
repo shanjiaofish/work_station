@@ -67,41 +67,115 @@ export default function MaterialUploadPopup({ onCreated }) {
 
       {/* Popup */}
       {isOpen && ReactDOM.createPortal(
-        <div className="popup-overlay">
+        <div className="popup-overlay" onClick={(e) => e.target === e.currentTarget && close()}>
           <div className="popup-content">
-            <button className="popup-close" onClick={close}>×</button>
-            <h2>新增材料</h2>
-            <form onSubmit={handleSubmit}>
-              <label>材料名稱 *</label>
-              <input name="material_name" required value={form.material_name} onChange={handleChange} />
+            <div className="popup-header">
+              <h2>新增材料</h2>
+              <button className="popup-close" onClick={close}>×</button>
+            </div>
+            
+            <div className="popup-body">
+              <form id="material-form" onSubmit={handleSubmit}>
+                <div className="form-group">
+                  <label className="required-label">材料名稱</label>
+                  <input 
+                    name="material_name" 
+                    required 
+                    value={form.material_name} 
+                    onChange={handleChange}
+                    placeholder="請輸入材料名稱"
+                  />
+                </div>
 
-              <label>碳足跡 *</label>
-              <input name="carbon_footprint" type="number" step="0.01" required value={form.carbon_footprint} onChange={handleChange} />
+                <div className="form-group">
+                  <label className="required-label">碳足跡</label>
+                  <input 
+                    name="carbon_footprint" 
+                    type="number" 
+                    step="0.01" 
+                    required 
+                    value={form.carbon_footprint} 
+                    onChange={handleChange}
+                    placeholder="0.00"
+                  />
+                </div>
 
-              <label>單位 *</label>
-              <input name="declaration_unit" required value={form.declaration_unit} onChange={handleChange} />
+                <div className="form-group">
+                  <label className="required-label">單位</label>
+                  <input 
+                    name="declaration_unit" 
+                    required 
+                    value={form.declaration_unit} 
+                    onChange={handleChange}
+                    placeholder="例如：kg, m³, m²"
+                  />
+                </div>
 
-              <label>資料來源</label>
-              <input name="data_source" value={form.data_source} onChange={handleChange} />
+                <div className="form-group">
+                  <label>資料來源</label>
+                  <input 
+                    name="data_source" 
+                    value={form.data_source} 
+                    onChange={handleChange}
+                    placeholder="請輸入資料來源"
+                  />
+                </div>
 
-              <label>生命周期範圍</label>
-              <input name="life_cycle_scope" value={form.life_cycle_scope} onChange={handleChange} />
+                <div className="form-group">
+                  <label>生命周期範圍</label>
+                  <input 
+                    name="life_cycle_scope" 
+                    value={form.life_cycle_scope} 
+                    onChange={handleChange}
+                    placeholder="例如：從搖籃到大門"
+                  />
+                </div>
 
-              <label>公告年份</label>
-              <input name="announcement_year" type="number" value={form.announcement_year} onChange={handleChange} />
+                <div className="form-group">
+                  <label>公告年份</label>
+                  <input 
+                    name="announcement_year" 
+                    type="number" 
+                    min="2000"
+                    max="2030"
+                    value={form.announcement_year} 
+                    onChange={handleChange}
+                    placeholder="例如：2024"
+                  />
+                </div>
 
-              <label>驗證單位</label>
-              <input name="verified" value={form.verified} onChange={handleChange} />
+                <div className="form-group">
+                  <label>驗證單位</label>
+                  <input 
+                    name="verified" 
+                    value={form.verified} 
+                    onChange={handleChange}
+                    placeholder="請輸入驗證單位"
+                  />
+                </div>
 
-              <label>備註</label>
-              <textarea name="remarks" value={form.remarks} onChange={handleChange} />
+                <div className="form-group">
+                  <label>備註</label>
+                  <textarea 
+                    name="remarks" 
+                    value={form.remarks} 
+                    onChange={handleChange}
+                    placeholder="請輸入相關備註資訊"
+                  />
+                </div>
 
-              {error && <p className="error">{error}</p>}
+                {error && <div className="error">{error}</div>}
+              </form>
+            </div>
+            
+            <div className="popup-footer">
               <div className="actions">
                 <button type="button" onClick={close}>取消</button>
-                <button type="submit" disabled={loading}>{loading ? '保存中...' : '保存'}</button>
+                <button type="submit" form="material-form" disabled={loading}>
+                  {loading ? '保存中...' : '保存'}
+                </button>
               </div>
-            </form>
+            </div>
           </div>
         </div>, document.body
       )}
