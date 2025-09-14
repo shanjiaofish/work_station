@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
 import { API_BASE } from '../api/config';
 
@@ -9,7 +9,17 @@ function InvoiceOcrPage() {
     const [downloadUrl, setDownloadUrl] = useState(null);
     const [ocrData, setOcrData] = useState([]); // 新增 state 來儲存結果資料
     const [isDragOver, setIsDragOver] = useState(false);
+    const [pdfPreviewUrl, setPdfPreviewUrl] = useState(null); // PDF 預覽 URL
     const fileInputRef = useRef(null);
+
+    // Cleanup PDF preview URL to prevent memory leaks
+    useEffect(() => {
+        return () => {
+            if (pdfPreviewUrl) {
+                URL.revokeObjectURL(pdfPreviewUrl);
+            }
+        };
+    }, [pdfPreviewUrl]);
 
     const handleFileChange = (event) => {
         const file = event.target.files[0];
@@ -18,8 +28,21 @@ function InvoiceOcrPage() {
             setDownloadUrl(null);
             setOcrData([]); // 清除舊資料
             setError('');
+
+            // 清理舊的預覽 URL
+            if (pdfPreviewUrl) {
+                URL.revokeObjectURL(pdfPreviewUrl);
+            }
+
+            // 創建新的 PDF 預覽 URL
+            const previewUrl = URL.createObjectURL(file);
+            setPdfPreviewUrl(previewUrl);
         } else {
             setError('檔案格式錯誤，請僅上傳 PDF 檔案。');
+            if (pdfPreviewUrl) {
+                URL.revokeObjectURL(pdfPreviewUrl);
+            }
+            setPdfPreviewUrl(null);
         }
     };
 
@@ -66,8 +89,21 @@ function InvoiceOcrPage() {
             setDownloadUrl(null);
             setOcrData([]);
             setError('');
+
+            // 清理舊的預覽 URL
+            if (pdfPreviewUrl) {
+                URL.revokeObjectURL(pdfPreviewUrl);
+            }
+
+            // 創建新的 PDF 預覽 URL
+            const previewUrl = URL.createObjectURL(file);
+            setPdfPreviewUrl(previewUrl);
         } else {
             setError('檔案格式錯誤，請僅上傳 PDF 檔案。');
+            if (pdfPreviewUrl) {
+                URL.revokeObjectURL(pdfPreviewUrl);
+            }
+            setPdfPreviewUrl(null);
         }
     };
 
@@ -120,7 +156,32 @@ function InvoiceOcrPage() {
                 >
                     {isLoading ? '辨識中，請耐心等候...' : '開始辨識'}
                 </button>
-                
+
+                {/* PDF 預覽區域 */}
+                {pdfPreviewUrl && (
+                    <section className="pdf-preview-section">
+                        <h3>📄 PDF 預覽</h3>
+                        <div className="pdf-preview-container">
+                            <iframe
+                                src={pdfPreviewUrl}
+                                title="PDF Preview"
+                                className="pdf-preview-frame"
+                                style={{
+                                    width: '100%',
+                                    height: '600px',
+                                    border: '1px solid #ddd',
+                                    borderRadius: '8px',
+                                    marginTop: '10px'
+                                }}
+                            />
+                            <p className="preview-info">
+                                📋 檔案名稱: {selectedFile?.name}<br/>
+                                📏 檔案大小: {selectedFile ? (selectedFile.size / 1024).toFixed(1) : '0'} KB
+                            </p>
+                        </div>
+                    </section>
+                )}
+
                 {error && <div className="error-message">{error}</div>}
 
                 {/* --- ↓↓↓ 核心修改：當有結果時，顯示下載面板和預覽表格 ↓↓↓ --- */}

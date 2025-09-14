@@ -1,0 +1,137 @@
+.progress-container {
+  width: 100%;
+  margin: 1rem 0;
+}
+
+.progress-message {
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+  color: #666;
+  text-align: center;
+}
+
+.progress-bar {
+  position: relative;
+  background-color: #f0f0f0;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.progress-bar.small {
+  height: 6px;
+}
+
+.progress-bar.medium {
+  height: 12px;
+}
+
+.progress-bar.large {
+  height: 20px;
+}
+
+.progress-fill {
+  height: 100%;
+  background-color: #007bff;
+  border-radius: inherit;
+  transition: width 0.3s ease;
+  position: relative;
+}
+
+.progress-bar.animated .progress-fill::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: linear-gradient(
+    45deg,
+    rgba(255, 255, 255, 0.15) 25%,
+    transparent 25%,
+    transparent 50%,
+    rgba(255, 255, 255, 0.15) 50%,
+    rgba(255, 255, 255, 0.15) 75%,
+    transparent 75%,
+    transparent
+  );
+  background-size: 20px 20px;
+  animation: progress-bar-stripes 1s linear infinite;
+}
+
+@keyframes progress-bar-stripes {
+  0% {
+    background-position: 20px 0;
+  }
+  100% {
+    background-position: 0 0;
+  }
+}
+
+.progress-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #333;
+  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.8);
+  z-index: 1;
+}
+
+/* Color variants */
+.progress-bar.primary .progress-fill {
+  background-color: #007bff;
+}
+
+.progress-bar.success .progress-fill {
+  background-color: #28a745;
+}
+
+.progress-bar.warning .progress-fill {
+  background-color: #ffc107;
+}
+
+.progress-bar.danger .progress-fill {
+  background-color: #dc3545;
+}
+
+.progress-bar.info .progress-fill {
+  background-color: #17a2b8;
+}
+
+/* Gradient variants */
+.progress-bar.gradient .progress-fill {
+  background: linear-gradient(90deg, #007bff, #0056b3);
+}
+
+.progress-bar.success.gradient .progress-fill {
+  background: linear-gradient(90deg, #28a745, #1e7e34);
+}
+
+.progress-bar.warning.gradient .progress-fill {
+  background: linear-gradient(90deg, #ffc107, #d39e00);
+}
+
+.progress-bar.danger.gradient .progress-fill {
+  background: linear-gradient(90deg, #dc3545, #bd2130);
+}
+
+/* Pulsing effect for indeterminate progress */
+.progress-bar.indeterminate .progress-fill {
+  width: 30% !important;
+  animation: indeterminate 2s ease-in-out infinite;
+}
+
+@keyframes indeterminate {
+  0% {
+    transform: translateX(-100%);
+  }
+  50% {
+    transform: translateX(350%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}

@@ -37,9 +37,11 @@ export default function MatchTable({
 
   // 獲取完整材料數據庫用於進階搜尋
   useEffect(() => {
-    axios.get(`${API_BASE}/materials/all`)
+    axios.get(`${API_BASE}/api/materials/all`)
       .then(res => {
-        const formattedMaterials = res.data.map(m => ({
+        // Handle new response format
+        const materials = res.data.success ? res.data.data : res.data;
+        const formattedMaterials = materials.map(m => ({
           value: {
             id: m.material_id, 
             name: m.material_name, 

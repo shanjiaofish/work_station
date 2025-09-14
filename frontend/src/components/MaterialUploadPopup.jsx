@@ -44,14 +44,20 @@ export default function MaterialUploadPopup({ onCreated }) {
         carbon_footprint: parseFloat(form.carbon_footprint),
         announcement_year: form.announcement_year ? parseInt(form.announcement_year, 10) : undefined,
       };
-      const res = await fetch(`${API_BASE}/materials`, {
+      const res = await fetch(`${API_BASE}/api/materials`, {
         method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload)
       });
       if (!res.ok) throw new Error(res.statusText);
       const data = await res.json();
       setLoading(false);
       close();
-      onCreated && onCreated(data.data);
+      
+      // Handle new response format
+      if (data.success) {
+        onCreated && onCreated(data.data);
+      } else {
+        throw new Error(data.error || 'Creation failed');
+      }
     } catch (err) {
       setLoading(false);
       setError(err.message);

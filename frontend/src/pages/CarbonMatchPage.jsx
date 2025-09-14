@@ -1,89 +1,101 @@
 import React, { useState } from 'react';
-import axios from 'axios';
 import * as XLSX from 'xlsx';
 import { useNavigate } from 'react-router-dom';
-import { API_BASE } from '../api/config';
+import { useMaterials } from '../hooks/useMaterials';
+import { useNotifications } from '../hooks/useNotifications';
+import LoadingSpinner from '../components/common/LoadingSpinner';
+import ErrorMessage from '../components/common/ErrorMessage';
 import '../App.css';
 
 function CarbonMatchPage() {
-    const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState('');
     const [uploaded, setUploaded] = useState(false);
     const [fileName, setFileName] = useState('');
     const navigate = useNavigate();
+    const { batchMatchMaterials, isLoading, error, clearError } = useMaterials();
+    const { success, error: notifyError } = useNotifications();
 
     // 處理檔案上傳
     const handleFile = async (e) => {
         const file = e.target.files[0];
         if (!file) return;
 
+        // Validate file type
+        if (!file.name.toLowerCase().endsWith('.xlsx') && !file.name.toLowerCase().endsWith('.xls')) {
+            notifyError('格式錯誤', '請選擇 Excel 檔案 (.xlsx 或 .xls)');
+            return;
+        }
+
+        // Validate file size (10MB limit)
+        const maxSize = 10 * 1024 * 1024;
+        if (file.size > maxSize) {
+            notifyError('檔案過大', '檔案大小不能超過 10MB');
+            return;
+        }
+
         setFileName(file.name);
         setUploaded(true);
-        setIsLoading(true);
-        setError('');
+        clearError();
 
         try {
             const reader = new FileReader();
             reader.onload = async (evt) => {
                 try {
                     const wb = XLSX.read(evt.target.result, { type: 'binary' });
+                    
+                    if (!wb.SheetNames || wb.SheetNames.length === 0) {
+                        throw new Error('Excel 檔案中沒有找到工作表');
+                    }
+
                     const sheet = wb.Sheets[wb.SheetNames[0]];
                     const data = XLSX.utils.sheet_to_json(sheet);
-                
-                // 提取材料名稱進行批量匹配
-                const queries = data.map(row => row['材料名稱'] || row['name'] || row[Object.keys(row)[0]]);
-                
-                try {
-                    // 設定 5 秒超時，使用正確的 API 端點
-                    const response = await axios.post(`${API_BASE}/materials/match-batch`, queries, {
-                        timeout: 5000
-                    });
+
+                    if (!data || data.length === 0) {
+                        throw new Error('Excel 檔案中沒有找到數據');
+                    }
                     
-                    // 跳轉到結果頁面，帶上原始數據和匹配結果
+                    // 提取材料名稱進行批量匹配
+                    const queries = data
+                        .map(row => row['材料名稱'] || row['name'] || row[Object.keys(row)[0]])
+                        .filter(query => query && typeof query === 'string' && query.trim() !== '')
+                        .map(query => query.trim());
+
+                    if (queries.length === 0) {
+                        throw new Error('沒有找到有效的材料名稱。請確認第一列包含材料名稱。');
+                    }
+
+                    success('檔案讀取成功', `找到 ${queries.length} 個材料項目，開始進行匹配...`);
+                    
+                    // 批量匹配材料
+                    const matchResults = await batchMatchMaterials(queries);
+                    
+                    // 跳轉到結果頁面
                     navigate('/carbon-match-result', {
                         state: {
                             sourceData: data,
-                            matchResults: response.data
+                            matchResults: matchResults,
+                            fileName: file.name
                         }
                     });
-                } catch (apiError) {
-                    console.error('API 調用失敗:', apiError);
                     
-                    // 如果 API 失敗，創建空的匹配結果，讓用戶可以手動選擇
-                    const emptyMatchResults = queries.map(query => ({
-                        query: query,
-                        matches: [],
-                        default: 0
-                    }));
-                    
-                    navigate('/carbon-match-result', {
-                        state: {
-                            sourceData: data,
-                            matchResults: emptyMatchResults,
-                            apiError: true
-                        }
-                    });
-                }
                 } catch (parseError) {
                     console.error('Excel 檔案解析錯誤:', parseError);
-                    setError('檔案解析失敗，請確認這是一個有效的 Excel 檔案。');
-                    setIsLoading(false);
+                    notifyError('檔案解析失敗', parseError.message || '請確認這是一個有效的 Excel 檔案');
                     setUploaded(false);
                 }
             };
             
             reader.onerror = () => {
                 console.error('檔案讀取錯誤');
-                setError('檔案讀取失敗，請重新選擇檔案。');
-                setIsLoading(false);
+                notifyError('檔案讀取失敗', '請重新選擇檔案');
                 setUploaded(false);
             };
             
             reader.readAsArrayBuffer(file);
+            
         } catch (err) {
             console.error('處理檔案時發生錯誤:', err);
-            setError('檔案處理失敗，請檢查檔案格式是否正確。');
-            setIsLoading(false);
+            notifyError('檔案處理失敗', err.message || '請檢查檔案格式是否正確');
+            setUploaded(false);
         }
     };
 
@@ -134,15 +146,23 @@ function CarbonMatchPage() {
                 </section>
 
                 {isLoading && (
-                    <div className="loading-indicator">
-                        正在進行材料匹配分析，請稍候...
-                    </div>
+                    <LoadingSpinner 
+                        size="large"
+                        message="正在進行材料匹配分析，請稍候..."
+                    />
                 )}
 
                 {error && (
-                    <div className="error-message">
-                        ❌ {error}
-                    </div>
+                    <ErrorMessage
+                        title="處理失敗"
+                        message={error}
+                        onRetry={() => {
+                            clearError();
+                            setUploaded(false);
+                            setFileName('');
+                        }}
+                        onDismiss={clearError}
+                    />
                 )}
 
                 <section className="info-section">

@@ -1,21 +1,34 @@
-# 現有套件 (OCR和其他功能)
-flask
-flask-cors
-pandas
-openpyxl
-googlemaps
-supabase
-cv2
-numpy
-cnocr
-easyocr
-pdf2image
-paddleocr
-werkzeug
+# Flask and Web Framework Dependencies
+Flask==2.3.3
+Flask-CORS==4.0.0
+flask-restx==1.1.0
+Werkzeug==2.3.7
 
-# 新增的Selenium相關套件
-selenium
-webdriver-manager
+# Data Processing and Analysis
+pandas==2.1.1
+numpy==1.25.2
+openpyxl==3.1.2
 
-# 其他實用套件
-urllib3
+# Computer Vision and Image Processing
+opencv-python==4.6.0.66
+pdf2image==1.16.3
+
+# OCR Libraries
+cnocr==2.3.0
+easyocr==1.7.0
+paddlepaddle==2.5.1
+paddleocr==3.1.1
+
+# Web Automation
+selenium==4.15.0
+webdriver-manager==4.0.1
+
+# API and Database
+googlemaps==4.10.0
+supabase==1.0.4
+python-dotenv==1.0.0
+
+# System and Utility
+Pillow==10.0.1
+requests==2.31.0
+urllib3==2.0.5

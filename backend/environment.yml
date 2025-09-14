@@ -1,0 +1,28 @@
+name: mfish_station
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.10.10
+  - pip
+  - pip:
+    - Flask==2.3.3
+    - Flask-CORS==4.0.0
+    - Werkzeug==2.3.7
+    - pandas==2.1.1
+    - numpy==1.25.2
+    - openpyxl==3.1.2
+    - opencv-python==4.6.0.66
+    - pdf2image==1.16.3
+    - cnocr==2.3.0
+    - easyocr==1.7.0
+    - paddlepaddle==2.5.1
+    - paddleocr==2.7.0.3
+    - selenium==4.15.0
+    - webdriver-manager==4.0.1
+    - googlemaps==4.10.0
+    - supabase==1.0.4
+    - python-dotenv==1.0.0
+    - Pillow==10.0.1
+    - requests==2.31.0
+    - urllib3==2.0.5

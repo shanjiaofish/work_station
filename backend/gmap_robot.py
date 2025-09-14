@@ -45,10 +45,42 @@ class GoogleMapsRobot:
         chrome_options.add_argument("--no-sandbox")
         chrome_options.add_argument("--disable-dev-shm-usage")
         
-        # 使用webdriver-manager自動管理ChromeDriver
-        service = Service(ChromeDriverManager().install())
-        self.driver = webdriver.Chrome(service=service, options=chrome_options)
-        self.wait = WebDriverWait(self.driver, 20)
+        try:
+            # 使用webdriver-manager自動管理ChromeDriver
+            driver_path = ChromeDriverManager().install()
+            
+            # 修正 macOS ARM64 的 ChromeDriver 路徑問題
+            if driver_path.endswith('THIRD_PARTY_NOTICES.chromedriver'):
+                # 尋找實際的 chromedriver 執行檔
+                import os
+                driver_dir = os.path.dirname(driver_path)
+                actual_driver = os.path.join(driver_dir, 'chromedriver')
+                if os.path.exists(actual_driver):
+                    driver_path = actual_driver
+                else:
+                    # 尋找其他可能的 chromedriver 檔案
+                    for file in os.listdir(driver_dir):
+                        if file.startswith('chromedriver') and not file.endswith('.chromedriver'):
+                            potential_driver = os.path.join(driver_dir, file)
+                            if os.path.isfile(potential_driver) and os.access(potential_driver, os.X_OK):
+                                driver_path = potential_driver
+                                break
+            
+            service = Service(driver_path)
+            self.driver = webdriver.Chrome(service=service, options=chrome_options)
+            self.wait = WebDriverWait(self.driver, 10)  # Reduced from 20 to 10 seconds
+            
+        except Exception as e:
+            print(f"ChromeDriver 初始化失敗: {e}")
+            # 嘗試使用系統 PATH 中的 chromedriver
+            try:
+                self.driver = webdriver.Chrome(options=chrome_options)
+                self.wait = WebDriverWait(self.driver, 10)  # Reduced from 20 to 10 seconds
+                print("已使用系統 PATH 中的 ChromeDriver")
+            except Exception as e2:
+                print(f"系統 ChromeDriver 也無法使用: {e2}")
+                raise Exception(f"無法初始化 ChromeDriver: {e}")
+                
         
     def _teardown_driver(self):
         """關閉瀏覽器"""
@@ -100,12 +132,12 @@ class GoogleMapsRobot:
             # 嘗試點擊任何找到的Cookie同意按鈕
             for selector in cookie_selectors:
                 try:
-                    accept_button = WebDriverWait(self.driver, 3).until(
+                    accept_button = WebDriverWait(self.driver, 2).until(  # Reduced from 3 to 2 seconds
                         EC.element_to_be_clickable((By.XPATH, selector))
                     )
                     accept_button.click()
                     print("✅ 已自動接受Cookie")
-                    time.sleep(2)  # 等待頁面載入
+                    time.sleep(1)  # Reduced from 2 to 1 second
                     return True
                 except:
                     continue
@@ -139,7 +171,7 @@ class GoogleMapsRobot:
 
         print(f"查詢路線：{origin} -> {destination}")
         self.driver.get(url)
-        time.sleep(8)
+        time.sleep(3)  # Reduced from 8 to 3 seconds
 
         try:
             route_blocks = self.wait.until(
@@ -172,7 +204,7 @@ class GoogleMapsRobot:
 
                 print(f"✔ 取得最短距離：{distance_text}，點擊該路線")
                 route_element.click()
-                time.sleep(3)
+                time.sleep(1)  # Reduced from 3 to 1 second
             else:
                 distance_text = "查無距離資訊"
                 print("❌ 找不到距離資訊。")
@@ -205,9 +237,11 @@ class GoogleMapsRobot:
         
         # 先訪問Google Maps主頁處理Cookie（只需要做一次）
         try:
+            print("🔄 初始化Google Maps...")
             self.driver.get("https://www.google.com/maps")
             self._handle_cookies()
-            time.sleep(2)
+            time.sleep(1)  # Reduced from 2 to 1 second
+            print("✅ Google Maps初始化完成")
         except Exception as e:
             print(f"⚠️ 初始化Google Maps時發生錯誤: {e}")
         
@@ -242,7 +276,7 @@ class GoogleMapsRobot:
                     result["image_local_path"] = screenshot_path
                 
                 results.append(result)
-                time.sleep(2)  # 避免過於頻繁的請求
+                time.sleep(0.5)  # Reduced from 2 to 0.5 seconds
 
         finally:
             # 清理瀏覽器
