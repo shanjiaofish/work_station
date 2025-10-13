@@ -910,4 +910,10 @@ if __name__ == '__main__':
         folder_path = app.config[folder_key]
         if not os.path.exists(folder_path):
             os.makedirs(folder_path)
-    app.run(debug=True, port=8001, host='0.0.0.0')
+
+    # Use PORT environment variable for Railway deployment, fallback to 8001 for local development
+    port = int(os.getenv('PORT', 8001))
+    # In production (Railway), debug should be False
+    debug = os.getenv('FLASK_ENV', 'development') == 'development'
+
+    app.run(debug=debug, port=port, host='0.0.0.0')

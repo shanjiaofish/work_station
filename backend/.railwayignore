@@ -1,0 +1,40 @@
+# Local development files
+.env
+*.pyc
+__pycache__/
+*.pyo
+*.pyd
+.Python
+*.so
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Runtime generated files
+screenshots/
+uploads/
+reports/
+temp_imgs/
+cropped_receipts/
+
+# Testing and documentation
+*.md
+.git/
+.gitignore
+
+# Package management
+pip-log.txt
+pip-delete-this-directory.txt
+.tox/
+.coverage
+.pytest_cache/
+
+# Virtual environments (should not be in repo anyway)
+venv/
+env/
+ENV/
