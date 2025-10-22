@@ -39,16 +39,25 @@ except ImportError as e:
     print(f"Warning: {e}. Some features may not work.")
     GoogleMapsRobot = None
 
-# --- OCR 相關套件 ---
-import cv2
-import numpy as np
-from cnocr import CnOcr
-import easyocr
-from pdf2image import convert_from_path
-from paddleocr import PaddleOCR
-# 從原本的 OCR 工具導入設定變數
-# 請確保 param.py 與 app.py 在同一個資料夾中
-from param import *
+# --- OCR 相關套件 (延遲導入以加快啟動) ---
+# Import these only when OCR功能 is actually needed
+# This prevents blocking the app startup with large model downloads
+try:
+    import cv2
+    import numpy as np
+    from pdf2image import convert_from_path
+    # 從原本的 OCR 工具導入設定變數
+    # 請確保 param.py 與 app.py 在同一個資料夾中
+    from param import *
+    OCR_IMPORTS_AVAILABLE = True
+except ImportError as e:
+    print(f"Warning: OCR dependencies not fully available: {e}")
+    OCR_IMPORTS_AVAILABLE = False
+
+# Lazy import OCR engines - these will be imported only when init_ocr_engines() is called
+CnOcr = None
+easyocr = None
+PaddleOCR = None
 
 # --- 解決 Flask 在 Windows 中 print() 可能產生的亂碼問題 ---
 try:
@@ -97,39 +106,75 @@ ocr_engines = { "cnocr": None, "easyocr": None, "paddleocr": None }
 
 def init_ocr_engines():
     """初始化所有 OCR 引擎。"""
+    global CnOcr, easyocr, PaddleOCR
+
     if ocr_engines["cnocr"] is None:
         print("首次使用，正在初始化 OCR 引擎 (可能需要幾分鐘)...")
 
+        # Lazy import OCR libraries here (not at module level)
+        if CnOcr is None:
+            try:
+                from cnocr import CnOcr as CnOcrClass
+                CnOcr = CnOcrClass
+                print("CnOCR library imported successfully")
+            except ImportError as e:
+                print(f"Failed to import CnOCR: {e}")
+
+        if easyocr is None:
+            try:
+                import easyocr as easyocr_module
+                easyocr = easyocr_module
+                print("EasyOCR library imported successfully")
+            except ImportError as e:
+                print(f"Failed to import EasyOCR: {e}")
+
+        if PaddleOCR is None:
+            try:
+                from paddleocr import PaddleOCR as PaddleOCRClass
+                PaddleOCR = PaddleOCRClass
+                print("PaddleOCR library imported successfully")
+            except ImportError as e:
+                print(f"Failed to import PaddleOCR: {e}")
+
         # 初始化 CnOcr - 使用 try/except 處理可能的導入問題
-        try:
-            ocr_engines["cnocr"] = CnOcr()
-            print("CnOCR 初始化成功！")
-        except Exception as e:
-            print(f"CnOCR 初始化失敗: {e}")
-            ocr_engines["cnocr"] = None
+        if CnOcr:
+            try:
+                ocr_engines["cnocr"] = CnOcr()
+                print("CnOCR 初始化成功！")
+            except Exception as e:
+                print(f"CnOCR 初始化失敗: {e}")
+                ocr_engines["cnocr"] = None
+        else:
+            print("CnOCR not available, skipping")
 
         # 初始化 EasyOCR
-        try:
-            ocr_engines["easyocr"] = easyocr.Reader(['ch_tra', 'en'])
-            print("EasyOCR 初始化成功！")
-        except Exception as e:
-            print(f"EasyOCR 初始化失敗: {e}")
-            ocr_engines["easyocr"] = None
+        if easyocr:
+            try:
+                ocr_engines["easyocr"] = easyocr.Reader(['ch_tra', 'en'])
+                print("EasyOCR 初始化成功！")
+            except Exception as e:
+                print(f"EasyOCR 初始化失敗: {e}")
+                ocr_engines["easyocr"] = None
+        else:
+            print("EasyOCR not available, skipping")
 
         # 初始化 PaddleOCR - 處理版本兼容性問題
-        try:
-            # 先嘗試不使用已棄用的參數
-            ocr_engines["paddleocr"] = PaddleOCR(use_textline_orientation=False, lang='ch')
-            print("PaddleOCR 初始化成功！")
-        except Exception as e:
-            print(f"PaddleOCR 初始化失敗 (新版): {e}")
+        if PaddleOCR:
             try:
-                # 回退到舊版參數
-                ocr_engines["paddleocr"] = PaddleOCR(use_angle_cls=False, lang='ch')
-                print("PaddleOCR 初始化成功 (舊版)！")
-            except Exception as e2:
-                print(f"PaddleOCR 完全初始化失敗: {e2}")
-                ocr_engines["paddleocr"] = None
+                # 先嘗試不使用已棄用的參數
+                ocr_engines["paddleocr"] = PaddleOCR(use_textline_orientation=False, lang='ch')
+                print("PaddleOCR 初始化成功！")
+            except Exception as e:
+                print(f"PaddleOCR 初始化失敗 (新版): {e}")
+                try:
+                    # 回退到舊版參數
+                    ocr_engines["paddleocr"] = PaddleOCR(use_angle_cls=False, lang='ch')
+                    print("PaddleOCR 初始化成功 (舊版)！")
+                except Exception as e2:
+                    print(f"PaddleOCR 完全初始化失敗: {e2}")
+                    ocr_engines["paddleocr"] = None
+        else:
+            print("PaddleOCR not available, skipping")
 
         print("OCR 引擎初始化完成！")
 

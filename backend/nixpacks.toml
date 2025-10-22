@@ -1,0 +1,16 @@
+[phases.setup]
+# Install system dependencies required for OCR and image processing
+aptPkgs = [
+    "poppler-utils",      # Required for pdf2image
+    "libgl1",             # Required for OpenCV (Ubuntu 24.04+ package name)
+    "libglib2.0-0",       # Required for OpenCV
+    "libsm6",             # Required for OpenCV
+    "libxext6",           # Required for OpenCV
+    "libxrender1",        # Required for OpenCV
+    "libgomp1",           # Required for OpenCV parallelization
+    "chromium-browser",   # Required for Selenium
+    "chromium-chromedriver", # ChromeDriver for Selenium
+]
+
+# Let Nixpacks handle Python installation automatically
+# The system will automatically run: pip install -r requirements.txt
