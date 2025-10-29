@@ -919,8 +919,24 @@ def preview_excel_materials():
         return jsonify({"error": "Please provide a valid Excel file"}), 400
 
     try:
-        # Read Excel file
-        df = pd.read_excel(file)
+        # Windows compatibility fix: Read file into memory
+        print(f"Reading Excel file: {file.filename}")
+        file_content = file.read()
+        file.seek(0)  # Reset pointer
+
+        # Create BytesIO object
+        excel_buffer = io.BytesIO(file_content)
+
+        # Determine engine based on file extension
+        filename = file.filename.lower()
+        engine = 'openpyxl' if filename.endswith('.xlsx') else 'xlrd'
+
+        print(f"Using pandas engine: {engine}")
+
+        # Read Excel file with explicit engine
+        df = pd.read_excel(excel_buffer, engine=engine)
+
+        print(f"Successfully read {len(df)} rows from Excel")
 
         # Validate required columns
         required_columns = ['material_name', 'carbon_footprint', 'declaration_unit']
@@ -985,7 +1001,9 @@ def preview_excel_materials():
                     validation_errors.extend([f"Row {index + 2}: {error}" for error in row_errors])
 
             except Exception as e:
-                validation_errors.append(f"Row {index + 2}: Unexpected error - {str(e)}")
+                error_msg = f"Row {index + 2}: Unexpected error - {str(e)}"
+                print(f"Error processing row {index + 2}: {e}")
+                validation_errors.append(error_msg)
                 preview_data.append({
                     'row_index': index + 2,
                     'is_valid': False,
@@ -996,6 +1014,8 @@ def preview_excel_materials():
         # Calculate statistics
         valid_count = sum(1 for item in preview_data if item['is_valid'])
         invalid_count = len(preview_data) - valid_count
+
+        print(f"Preview complete: {valid_count} valid, {invalid_count} invalid rows")
 
         return jsonify({
             "preview_data": preview_data,
@@ -1010,8 +1030,11 @@ def preview_excel_materials():
         })
 
     except Exception as e:
+        error_msg = f"Failed to preview Excel file: {str(e)}"
         print(f"Error previewing Excel: {e}")
-        return jsonify({"error": f"Failed to preview Excel file: {str(e)}"}), 500
+        import traceback
+        traceback.print_exc()  # Print full traceback for debugging
+        return jsonify({"error": error_msg}), 500
 
 @app.route('/api/materials/import-excel', methods=['POST'])
 def import_materials_from_excel():
