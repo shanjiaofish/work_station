@@ -70,7 +70,7 @@ except AttributeError:
 # ======================================================================
 app = Flask(__name__)
 CORS(app, 
-     origins=['http://localhost:5173', 'http://localhost:5174', 'http://127.0.0.1:5173', 'http://127.0.0.1:5174'],
+     origins=['http://localhost:5173', 'http://localhost:5174', 'http://127.0.0.1:5173', 'http://127.0.0.1:5174', 'http://jog150.synology.me:5173'],
      methods=['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
      allow_headers=['Content-Type', 'Authorization'])
 
@@ -907,6 +907,84 @@ def download_excel_template():
     except Exception as e:
         print(f"Error creating template: {e}")
         return jsonify({"error": f"Failed to create template: {str(e)}"}), 500
+
+@app.route('/api/materials/match-template', methods=['GET'])
+def download_match_template():
+    """Download Excel template for material matching"""
+    try:
+        # Create template data for matching
+        template_data = {
+            '材料名稱': ['混凝土', '鋼筋', '玻璃', ''],
+            '數量': ['100', '50', '200', ''],
+            '規格': ['C30', 'SD420W', '6mm強化玻璃', ''],
+            '備註': ['', '', '', '']
+        }
+
+        df = pd.DataFrame(template_data)
+        output = io.BytesIO()
+
+        with pd.ExcelWriter(output, engine='openpyxl') as writer:
+            # Write data to Excel
+            df.to_excel(writer, index=False, sheet_name='材料配對範本')
+
+            # Get workbook and worksheet for formatting
+            workbook = writer.book
+            worksheet = writer.sheets['材料配對範本']
+
+            # Define styles
+            from openpyxl.styles import Font, PatternFill, Border, Side, Alignment
+
+            # Header style - required column
+            required_fill = PatternFill(start_color="FFE6E6", end_color="FFE6E6", fill_type="solid")
+            required_font = Font(bold=True, color="CC0000", size=12)
+
+            # Header style - optional columns
+            optional_fill = PatternFill(start_color="E6F3FF", end_color="E6F3FF", fill_type="solid")
+            optional_font = Font(bold=True, color="0066CC", size=11)
+
+            # Example data style
+            example_font = Font(color="666666", italic=True)
+
+            # Apply styles to headers
+            required_columns = ['材料名稱']
+
+            for col_num, column in enumerate(df.columns, 1):
+                cell = worksheet.cell(row=1, column=col_num)
+                cell.alignment = Alignment(horizontal='center', vertical='center')
+
+                if column in required_columns:
+                    cell.fill = required_fill
+                    cell.font = required_font
+                else:
+                    cell.fill = optional_fill
+                    cell.font = optional_font
+
+                # Auto-adjust column width
+                if column == '材料名稱':
+                    worksheet.column_dimensions[cell.column_letter].width = 25
+                elif column == '備註':
+                    worksheet.column_dimensions[cell.column_letter].width = 30
+                else:
+                    worksheet.column_dimensions[cell.column_letter].width = 15
+
+            # Style example data rows
+            for row_num in range(2, 5):  # Rows 2-4 (example data)
+                for col_num in range(1, len(df.columns) + 1):
+                    cell = worksheet.cell(row=row_num, column=col_num)
+                    cell.font = example_font
+
+        output.seek(0)
+
+        return send_file(
+            output,
+            mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            as_attachment=True,
+            download_name='材料配對匯入範本.xlsx'
+        )
+
+    except Exception as e:
+        print(f"Error creating match template: {e}")
+        return jsonify({"error": f"Failed to create match template: {str(e)}"}), 500
 
 @app.route('/api/materials/preview-excel', methods=['POST'])
 def preview_excel_materials():

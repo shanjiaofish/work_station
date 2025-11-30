@@ -5,6 +5,7 @@ import { useMaterials } from '../hooks/useMaterials';
 import { useNotifications } from '../hooks/useNotifications';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 import ErrorMessage from '../components/common/ErrorMessage';
+import { API_BASE } from '../api/config';
 import '../App.css';
 
 function CarbonMatchPage() {
@@ -99,6 +100,33 @@ function CarbonMatchPage() {
         }
     };
 
+    // 處理範本下載
+    const handleDownloadTemplate = async () => {
+        try {
+            console.log('🔄 Downloading match template...');
+            const response = await fetch(`${API_BASE}/api/materials/match-template`);
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = '材料配對匯入範本.xlsx';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            window.URL.revokeObjectURL(url);
+
+            console.log('✅ Match template downloaded successfully');
+            success('下載成功', '已下載材料配對範本');
+        } catch (error) {
+            console.error('Template download error:', error);
+            notifyError('下載失敗', '下載範本失敗，請稍後再試');
+        }
+    };
 
     return (
         <div className="carbon-match-page">
@@ -120,6 +148,27 @@ function CarbonMatchPage() {
                     </ol>
                 </section>
 
+                <section className="template-section" style={{ textAlign: 'center', margin: '20px 0' }}>
+                    <button
+                        onClick={handleDownloadTemplate}
+                        className="btn btn-outline-primary"
+                        style={{
+                            backgroundColor: 'transparent',
+                            color: '#007bff',
+                            border: '1px solid #007bff',
+                            padding: '10px 20px',
+                            borderRadius: '4px',
+                            cursor: 'pointer',
+                            fontSize: '1em'
+                        }}
+                    >
+                        📁 下載 Excel 範本
+                    </button>
+                    <div style={{ fontSize: '0.85em', color: '#666', marginTop: '8px' }}>
+                        包含材料名稱欄位及範例資料
+                    </div>
+                </section>
+
                 <section className="input-section">
                     <div className="upload-area">
                         <input
@@ -130,13 +179,13 @@ function CarbonMatchPage() {
                             style={{ display: 'none' }}
                             disabled={isLoading}
                         />
-                        <label 
-                            htmlFor="file-upload" 
+                        <label
+                            htmlFor="file-upload"
                             className={`btn btn-primary ${isLoading ? 'disabled' : ''}`}
                         >
                             {isLoading ? '處理中...' : (uploaded ? '重新上傳檔案' : '選擇 Excel 檔案')}
                         </label>
-                        
+
                         {uploaded && !isLoading && (
                             <div className="file-status">
                                 <span className="file-name">已選擇: {fileName}</span>

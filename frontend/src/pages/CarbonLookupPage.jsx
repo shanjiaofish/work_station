@@ -3,6 +3,7 @@ import { useMaterials } from '../hooks/useMaterials';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 import ErrorMessage from '../components/common/ErrorMessage';
 import './CarbonLookupPage.css';
+import { API_BASE } from '../api/config';
 
 function CarbonLookupPage() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -35,7 +36,7 @@ function CarbonLookupPage() {
         setIsInitialLoad(true); // Show loading state
         
         const startTime = Date.now();
-        const response = await fetch('http://localhost:8001/api/materials/all');
+        const response = await fetch(`${API_BASE}/api/materials/all`);
         
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -202,7 +203,7 @@ function CarbonLookupPage() {
     
     try {
       console.log('🔄 Previewing Excel file...');
-      const response = await fetch('http://localhost:8001/api/materials/preview-excel', {
+      const response = await fetch(`${API_BASE}/api/materials/preview-excel`, {
         method: 'POST',
         body: formData
       });
@@ -250,7 +251,7 @@ function CarbonLookupPage() {
     
     try {
       console.log('🔄 Uploading materials to database...');
-      const response = await fetch('http://localhost:8001/api/materials/import-excel', {
+      const response = await fetch(`${API_BASE}/api/materials/import-excel`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -277,7 +278,7 @@ function CarbonLookupPage() {
       // Refresh materials list after successful import
       if (result.imported_count > 0) {
         console.log('🔄 Refreshing materials list...');
-        const materialsResponse = await fetch('http://localhost:8001/api/materials/all');
+        const materialsResponse = await fetch(`${API_BASE}/api/materials/all`);
         if (materialsResponse.ok) {
           const materialsResult = await materialsResponse.json();
           // Handle new response format
@@ -314,7 +315,7 @@ function CarbonLookupPage() {
   const handleDownloadTemplate = async () => {
     try {
       console.log('🔄 Downloading Excel template...');
-      const response = await fetch('http://localhost:8001/api/materials/template');
+      const response = await fetch(`${API_BASE}/api/materials/template`);
       
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);

@@ -81,10 +81,12 @@ backend/cropped_receipts/
 *.sqlite
 *.sqlite3
 
-# Optional: Uncomment if you don't want to track generated files
 # backend/screenshots/
-# backend/uploads/
-# backend/reports/
+
+# Optional: Uncomment if you don't want to track generated files
+backend/screenshots/
+backend/uploads/
+backend/reports/
 
 # Project-specific excludes
 MaterialCorrectSystem_移植說明.md

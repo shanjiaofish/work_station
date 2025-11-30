@@ -35,18 +35,27 @@ function CarbonMatchResultPage() {
     };
 
     const generateDownloadData = () => {
-        return results.map((result, index) => {
-            const selectedMaterial = selections[index];
-            const originalData = sourceData[index] || {};
-            
+        return results.map((result) => {
+            // 使用陣列索引來獲取正確的選擇和原始資料
+            const rowIndex = results.indexOf(result);
+            const selectedMaterial = selections[rowIndex];
+            const originalData = sourceData[rowIndex] || {};
+
+            // 取得第一個建議材料（top suggestion）- 使用後端返回的欄位名稱
+            const topSuggestion = result.matches?.[0];
+            const suggestionText = topSuggestion
+                ? `${topSuggestion.name || topSuggestion.material_name} (${topSuggestion.declaration_unit || topSuggestion.unit}, ${topSuggestion.carbon_footprint || topSuggestion.carbon})`
+                : '無建議';
+
             return {
-                ...originalData,
-                '原始材料名稱': result.query,
-                '匹配材料名稱': selectedMaterial?.name || (result.matches?.[0]?.name || '無匹配'),
-                '碳排放量': selectedMaterial?.carbon || (result.matches?.[0]?.carbon || '無數據'),
-                '單位': selectedMaterial?.unit || (result.matches?.[0]?.unit || '無數據'),
-                '信心度': selectedMaterial?.score || (result.matches?.[0]?.score || '無數據'),
-                '來源': selectedMaterial?.source || (result.matches?.[0]?.source || '無數據')
+                '原始名稱': result.query,
+                '建議材料選擇': suggestionText,
+                '選定名稱': selectedMaterial?.name || topSuggestion?.name || topSuggestion?.material_name || '無匹配',
+                '單位': selectedMaterial?.unit || topSuggestion?.declaration_unit || topSuggestion?.unit || '無數據',
+                '碳排(kg/CO₂e)': selectedMaterial?.carbon || topSuggestion?.carbon_footprint || topSuggestion?.carbon || '無數據',
+                '信心度': selectedMaterial?.score || topSuggestion?.score || '無數據',
+                '來源': selectedMaterial?.source || topSuggestion?.data_source || topSuggestion?.source || '無數據',
+                ...originalData
             };
         });
     };
