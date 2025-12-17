@@ -1,32 +1,46 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { useAppContext } from '../context/AppContext';
 import MatchTable from '../components/MatchTable';
 import MaterialUploadPopup from '../components/MaterialUploadPopup';
 import DownloadButton from '../components/DownloadButton';
 import '../App.css';
 
 function CarbonMatchResultPage() {
-    const location = useLocation();
     const navigate = useNavigate();
+    const { state, actions } = useAppContext();
     const [results, setResults] = useState([]);
     const [sourceData, setSourceData] = useState([]);
     const [selections, setSelections] = useState({});
 
     useEffect(() => {
-        if (location.state) {
-            setResults(location.state.matchResults || []);
-            setSourceData(location.state.sourceData || []);
+        console.log('📖 Reading upload match data from context:', {
+            hasUploadMatch: !!state.uploadMatch,
+            matchResultsLength: state.uploadMatch?.matchResults?.length || 0,
+            sourceDataLength: state.uploadMatch?.sourceData?.length || 0,
+            fileName: state.uploadMatch?.fileName,
+            selectionsCount: Object.keys(state.uploadMatch?.selections || {}).length
+        });
+
+        // Read data from context instead of location.state
+        if (state.uploadMatch && state.uploadMatch.matchResults.length > 0) {
+            console.log('✅ Setting results from context');
+            setResults(state.uploadMatch.matchResults);
+            setSourceData(state.uploadMatch.sourceData);
+            setSelections(state.uploadMatch.selections);
         } else {
-            // 如果沒有狀態數據，重定向到上傳頁面
-            navigate('/carbon-match');
+            console.log('❌ No upload match data found in context');
         }
-    }, [location.state, navigate]);
+    }, [state.uploadMatch]);
 
     const handleConfirmSelection = (originalIndex, material) => {
-        setSelections(prev => ({
-            ...prev,
+        const updatedSelections = {
+            ...selections,
             [originalIndex]: material
-        }));
+        };
+        setSelections(updatedSelections);
+        // Update selections in context for persistence
+        actions.updateUploadMatchSelections(updatedSelections);
     };
 
     const handleMaterialCreated = (newMaterial) => {
@@ -53,6 +67,7 @@ function CarbonMatchResultPage() {
                 '選定名稱': selectedMaterial?.name || topSuggestion?.name || topSuggestion?.material_name || '無匹配',
                 '單位': selectedMaterial?.unit || topSuggestion?.declaration_unit || topSuggestion?.unit || '無數據',
                 '碳排(kg/CO₂e)': selectedMaterial?.carbon || topSuggestion?.carbon_footprint || topSuggestion?.carbon || '無數據',
+                '備註(複合材料)': '',
                 '信心度': selectedMaterial?.score || topSuggestion?.score || '無數據',
                 '來源': selectedMaterial?.source || topSuggestion?.data_source || topSuggestion?.source || '無數據',
                 ...originalData
@@ -64,7 +79,16 @@ function CarbonMatchResultPage() {
         return (
             <div className="container">
                 <div className="loading-indicator">
-                    <div>🔄 正在載入結果...</div>
+                    <div style={{ textAlign: 'center', padding: '40px' }}>
+                        <h2>📭 沒有上傳的資料</h2>
+                        <p>請先上傳 Excel 檔案進行材料匹配</p>
+                        <button
+                            onClick={() => navigate('/carbon-match')}
+                            style={{ marginTop: '20px' }}
+                        >
+                            前往上傳頁面
+                        </button>
+                    </div>
                 </div>
             </div>
         );
@@ -78,9 +102,10 @@ function CarbonMatchResultPage() {
             </p>
 
             <div className="results-section">
-                <MatchTable 
-                    results={results} 
+                <MatchTable
+                    results={results}
                     onConfirmSelection={handleConfirmSelection}
+                    initialSelections={selections}
                 />
             </div>
 

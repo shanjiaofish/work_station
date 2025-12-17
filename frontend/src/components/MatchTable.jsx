@@ -6,34 +6,44 @@ import './MatchTable.css';
 
 export default function MatchTable({
   results: matchResults,
-  onConfirmSelection
+  onConfirmSelection,
+  initialSelections = null
 }) {
   const [advancedRows, setAdvancedRows] = useState([]);
   const [selections, setSelections] = useState([]);
   const [allMaterialsForSelect, setAllMaterialsForSelect] = useState([]);
 
-  // 初始化選擇狀態 - 使用默認推薦的材料
+  // 初始化選擇狀態 - 優先使用保存的選擇，否則使用默認推薦的材料
   useEffect(() => {
     if (matchResults) {
-      const initialSelections = matchResults.map((result, index) => {
-        if (result && Array.isArray(result.matches) && result.matches.length > 0) {
-          const defaultIndex = (typeof result.default === 'number' && result.default >= 0 && result.default < result.matches.length)
-                               ? result.default
-                               : 0;
-          return result.matches[defaultIndex] || result.matches[0] || null;
-        }
-        // 如果沒有匹配結果，創建一個空的佔位符
-        return {
-          name: result?.query || '',
-          unit: '', 
-          carbon: '', 
-          source: 'no_initial_match',
-          id: `placeholder-${index}-${Date.now()}`
-        };
-      });
-      setSelections(initialSelections);
+      // If we have saved selections from context, convert from object to array
+      if (initialSelections && Object.keys(initialSelections).length > 0) {
+        const restoredSelections = matchResults.map((result, index) => {
+          return initialSelections[index] || null;
+        });
+        setSelections(restoredSelections);
+      } else {
+        // Otherwise use default recommended materials
+        const defaultSelections = matchResults.map((result, index) => {
+          if (result && Array.isArray(result.matches) && result.matches.length > 0) {
+            const defaultIndex = (typeof result.default === 'number' && result.default >= 0 && result.default < result.matches.length)
+                                 ? result.default
+                                 : 0;
+            return result.matches[defaultIndex] || result.matches[0] || null;
+          }
+          // 如果沒有匹配結果，創建一個空的佔位符
+          return {
+            name: result?.query || '',
+            unit: '',
+            carbon: '',
+            source: 'no_initial_match',
+            id: `placeholder-${index}-${Date.now()}`
+          };
+        });
+        setSelections(defaultSelections);
+      }
     }
-  }, [matchResults]);
+  }, [matchResults, initialSelections]);
 
   // 獲取完整材料數據庫用於進階搜尋
   useEffect(() => {
@@ -95,22 +105,6 @@ export default function MatchTable({
   const handleSelect = (rowIndex, option) => {
     const updated = [...selections];
     updated[rowIndex] = option ? option.value : selections[rowIndex]; // 保持當前選擇如果沒有新選擇
-    setSelections(updated);
-    if (onConfirmSelection) {
-      onConfirmSelection(rowIndex, updated[rowIndex]);
-    }
-  };
-
-  const handleMenuOpen = (rowIndex) => {
-    // 當點擊搜尋框時清空當前選擇，提供乾淨的輸入體驗
-    const updated = [...selections];
-    updated[rowIndex] = {
-      name: '',
-      unit: '',
-      carbon: '',
-      source: 'cleared_for_search',
-      id: `cleared-${rowIndex}-${Date.now()}`
-    };
     setSelections(updated);
     if (onConfirmSelection) {
       onConfirmSelection(rowIndex, updated[rowIndex]);
@@ -179,7 +173,6 @@ export default function MatchTable({
                     options={currentOptions}
                     value={selectedValue || null}
                     onChange={opt => handleSelect(i, opt)}
-                    onMenuOpen={() => handleMenuOpen(i)}
                     isSearchable={true}
                     placeholder={placeholder}
                     noOptionsMessage={() => '無匹配選項'}

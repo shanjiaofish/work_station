@@ -4,6 +4,7 @@ import LoadingSpinner from '../components/common/LoadingSpinner';
 import ErrorMessage from '../components/common/ErrorMessage';
 import './CarbonLookupPage.css';
 import { API_BASE } from '../api/config';
+import { normalizeText } from '../utils/textNormalization';
 
 function CarbonLookupPage() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -82,10 +83,11 @@ function CarbonLookupPage() {
       return;
     }
 
-    // 本地過濾搜索
+    // 本地過濾搜索 - 使用正規化比對
+    const normalizedQuery = normalizeText(query);
     const filteredResults = allMaterials
       .filter(material =>
-        material.material_name && material.material_name.toLowerCase().includes(query.toLowerCase())
+        material.material_name && normalizeText(material.material_name).includes(normalizedQuery)
       )
       .map(material => material.material_name)
       .filter((name, index, self) => self.indexOf(name) === index); // 去重
@@ -108,10 +110,11 @@ function CarbonLookupPage() {
         return;
       }
 
-      // 本地過濾搜索
+      // 本地過濾搜索 - 使用正規化比對
+      const normalizedQuery = normalizeText(searchQuery);
       const filteredResults = allMaterials
         .filter(material =>
-          material.material_name && material.material_name.toLowerCase().includes(searchQuery.toLowerCase())
+          material.material_name && normalizeText(material.material_name).includes(normalizedQuery)
         )
         .map(material => material.material_name)
         .filter((name, index, self) => self.indexOf(name) === index); // 去重

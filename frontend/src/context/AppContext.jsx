@@ -22,7 +22,16 @@ const initialState = {
     isSearching: false,
     searchError: null
   },
-  
+
+  // Upload Match state (for 上傳檔案配對)
+  uploadMatch: {
+    sourceData: [],      // Original Excel data
+    matchResults: [],    // API matching results
+    fileName: null,      // Original file name
+    selections: {},      // User's confirmed material selections {rowIndex: materialId}
+    timestamp: null      // When data was uploaded
+  },
+
   // OCR state
   ocr: {
     isProcessing: false,
@@ -64,7 +73,12 @@ const actionTypes = {
   SET_MATERIAL_BATCH_RESULTS: 'SET_MATERIAL_BATCH_RESULTS',
   SET_MATERIALS_ERROR: 'SET_MATERIALS_ERROR',
   CLEAR_MATERIALS_ERROR: 'CLEAR_MATERIALS_ERROR',
-  
+
+  // Upload Match actions
+  SET_UPLOAD_MATCH_DATA: 'SET_UPLOAD_MATCH_DATA',
+  UPDATE_UPLOAD_MATCH_SELECTIONS: 'UPDATE_UPLOAD_MATCH_SELECTIONS',
+  CLEAR_UPLOAD_MATCH_DATA: 'CLEAR_UPLOAD_MATCH_DATA',
+
   // OCR actions
   SET_OCR_PROCESSING: 'SET_OCR_PROCESSING',
   SET_OCR_FILE: 'SET_OCR_FILE',
@@ -152,7 +166,50 @@ function appReducer(state, action) {
         ...state,
         materials: { ...state.materials, searchError: null }
       };
-    
+
+    // Upload Match actions
+    case actionTypes.SET_UPLOAD_MATCH_DATA:
+      console.log('🔄 REDUCER: SET_UPLOAD_MATCH_DATA', {
+        sourceDataLength: action.payload.sourceData?.length,
+        matchResultsLength: action.payload.matchResults?.length,
+        fileName: action.payload.fileName
+      });
+      return {
+        ...state,
+        uploadMatch: {
+          sourceData: action.payload.sourceData,
+          matchResults: action.payload.matchResults,
+          fileName: action.payload.fileName,
+          selections: {},
+          timestamp: Date.now()
+        }
+      };
+
+    case actionTypes.UPDATE_UPLOAD_MATCH_SELECTIONS:
+      console.log('🔄 REDUCER: UPDATE_UPLOAD_MATCH_SELECTIONS', {
+        selectionsCount: Object.keys(action.payload || {}).length
+      });
+      return {
+        ...state,
+        uploadMatch: {
+          ...state.uploadMatch,
+          selections: action.payload
+        }
+      };
+
+    case actionTypes.CLEAR_UPLOAD_MATCH_DATA:
+      console.log('🔄 REDUCER: CLEAR_UPLOAD_MATCH_DATA');
+      return {
+        ...state,
+        uploadMatch: {
+          sourceData: [],
+          matchResults: [],
+          fileName: null,
+          selections: {},
+          timestamp: null
+        }
+      };
+
     // OCR actions
     case actionTypes.SET_OCR_PROCESSING:
       return {
@@ -347,7 +404,12 @@ export function AppProvider({ children }) {
     setMaterialBatchResults: (results) => dispatch({ type: actionTypes.SET_MATERIAL_BATCH_RESULTS, payload: results }),
     setMaterialsError: (error) => dispatch({ type: actionTypes.SET_MATERIALS_ERROR, payload: error }),
     clearMaterialsError: () => dispatch({ type: actionTypes.CLEAR_MATERIALS_ERROR }),
-    
+
+    // Upload Match actions
+    setUploadMatchData: (data) => dispatch({ type: actionTypes.SET_UPLOAD_MATCH_DATA, payload: data }),
+    updateUploadMatchSelections: (selections) => dispatch({ type: actionTypes.UPDATE_UPLOAD_MATCH_SELECTIONS, payload: selections }),
+    clearUploadMatchData: () => dispatch({ type: actionTypes.CLEAR_UPLOAD_MATCH_DATA }),
+
     // OCR actions
     setOCRProcessing: (processing) => dispatch({ type: actionTypes.SET_OCR_PROCESSING, payload: processing }),
     setOCRFile: (file) => dispatch({ type: actionTypes.SET_OCR_FILE, payload: file }),

@@ -3,6 +3,7 @@ import * as XLSX from 'xlsx';
 import { useNavigate } from 'react-router-dom';
 import { useMaterials } from '../hooks/useMaterials';
 import { useNotifications } from '../hooks/useNotifications';
+import { useAppContext } from '../context/AppContext';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 import ErrorMessage from '../components/common/ErrorMessage';
 import { API_BASE } from '../api/config';
@@ -14,6 +15,7 @@ function CarbonMatchPage() {
     const navigate = useNavigate();
     const { batchMatchMaterials, isLoading, error, clearError } = useMaterials();
     const { success, error: notifyError } = useNotifications();
+    const { actions } = useAppContext();
 
     // 處理檔案上傳
     const handleFile = async (e) => {
@@ -36,6 +38,9 @@ function CarbonMatchPage() {
         setFileName(file.name);
         setUploaded(true);
         clearError();
+
+        // Clear any previous upload match data
+        actions.clearUploadMatchData();
 
         try {
             const reader = new FileReader();
@@ -65,18 +70,25 @@ function CarbonMatchPage() {
                     }
 
                     success('檔案讀取成功', `找到 ${queries.length} 個材料項目，開始進行匹配...`);
-                    
+
                     // 批量匹配材料
                     const matchResults = await batchMatchMaterials(queries);
-                    
-                    // 跳轉到結果頁面
-                    navigate('/carbon-match-result', {
-                        state: {
-                            sourceData: data,
-                            matchResults: matchResults,
-                            fileName: file.name
-                        }
+
+                    // Save upload match data to context
+                    console.log('📦 Saving upload match data to context:', {
+                        sourceDataLength: data.length,
+                        matchResultsLength: matchResults.length,
+                        fileName: file.name
                     });
+
+                    actions.setUploadMatchData({
+                        sourceData: data,
+                        matchResults: matchResults,
+                        fileName: file.name
+                    });
+
+                    // 跳轉到結果頁面
+                    navigate('/carbon-match-result');
                     
                 } catch (parseError) {
                     console.error('Excel 檔案解析錯誤:', parseError);
