@@ -141,26 +141,26 @@
     width: 100%;
     border-collapse: collapse;
     font-size: 0.95rem;
-    min-width: 800px;
+    min-width: 600px;
 }
 
 .carbon-lookup-page .materials-table th,
 .carbon-lookup-page .materials-table td {
     padding: 12px 15px;
     text-align: left;
-    border-bottom: 1px solid #e2e8f0;
+    border: 1px solid #d0d7de;
 }
 
 .carbon-lookup-page .materials-table th {
-    background-color: #f7fafc;
+    background-color: #d9e2f3;
     font-weight: 600;
-    color: #4a5568;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
+    color: #1a202c;
+    text-transform: none;
+    letter-spacing: normal;
 }
 
 .carbon-lookup-page .materials-table tbody tr:last-child td {
-    border-bottom: none;
+    border-bottom: 1px solid #d0d7de;
 }
 
 .carbon-lookup-page .materials-table tbody tr:hover {
@@ -170,35 +170,7 @@
 .carbon-lookup-page .materials-table td {
     color: #2d3748;
     word-break: break-word;
-}
-
-/* 特殊欄位樣式 */
-.carbon-lookup-page .material-name {
-    font-weight: 500;
-    color: #3182ce;
-    max-width: 200px;
-}
-
-.carbon-lookup-page .carbon-value {
-    color: #2f855a;
-    font-weight: 500;
-    background: #f0fff4;
-    padding: 4px 8px;
-    border-radius: 4px;
-    display: inline-block;
-    min-width: 80px;
-    text-align: center;
-}
-
-.carbon-lookup-page .year-value {
-    color: #3182ce;
-    font-weight: 500;
-    background: #ebf8ff;
-    padding: 4px 8px;
-    border-radius: 4px;
-    display: inline-block;
-    min-width: 60px;
-    text-align: center;
+    background-color: #ffffff;
 }
 
 /* 載入指示器和錯誤訊息 */
@@ -249,16 +221,16 @@
         margin: 1rem;
         padding: 1.5rem;
     }
-    
+
     .carbon-lookup-page .header h1 {
         font-size: 2rem;
     }
-    
+
     .carbon-lookup-page .materials-table {
         font-size: 0.85rem;
-        min-width: 600px;
+        min-width: 500px;
     }
-    
+
     .carbon-lookup-page .materials-table th,
     .carbon-lookup-page .materials-table td {
         padding: 8px 10px;
@@ -269,11 +241,11 @@
     .carbon-lookup-page .header h1 {
         font-size: 1.8rem;
     }
-    
+
     .carbon-lookup-page .materials-table {
-        min-width: 500px;
+        min-width: 400px;
     }
-    
+
     .carbon-lookup-page .suggestion-item {
         padding: 10px 12px;
         font-size: 13px;

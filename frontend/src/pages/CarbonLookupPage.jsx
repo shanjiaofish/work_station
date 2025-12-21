@@ -365,7 +365,7 @@ function CarbonLookupPage() {
                 marginTop: '10px'
               }}
             >
-              📊 {showImportPanel ? '隱藏' : '顯示'} Excel 匯入功能
+              📊 {showImportPanel ? '隱藏' : '新增'}  數據至資料庫
             </button>
             <span style={{ marginLeft: '10px', color: '#666' }}>
               目前資料庫共 {allMaterials.length} 筆材料
@@ -678,27 +678,21 @@ function CarbonLookupPage() {
               <table className="materials-table">
                 <thead>
                   <tr>
-                    <th>材料名稱</th>
-                    <th>碳足跡 (kg CO₂e)</th>
-                    <th>申報單位</th>
-                    <th>數據來源</th>
+                    <th>碳係數名稱</th>
+                    <th>數值</th>
+                    <th>宣告單位</th>
+                    <th>公告單位</th>
                     <th>公告年份</th>
-                    <th>生命週期範疇</th>
-                    <th>已驗證</th>
-                    <th>備註</th>
                   </tr>
                 </thead>
                 <tbody>
                   {selectedMaterialDetails.map((material, index) => (
                     <tr key={material.material_id || index}>
-                      <td className="material-name">{material.material_name}</td>
-                      <td className="carbon-value">{material.carbon_footprint}</td>
+                      <td>{material.material_name}</td>
+                      <td>{material.carbon_footprint}</td>
                       <td>{material.declaration_unit}</td>
                       <td>{material.data_source || '-'}</td>
-                      <td className="year-value">{material.announcement_year || '-'}</td>
-                      <td>{material.life_cycle_scope || '-'}</td>
-                      <td>{material.verified || '-'}</td>
-                      <td>{material.remarks || '-'}</td>
+                      <td>{material.announcement_year || '-'}</td>
                     </tr>
                   ))}
                 </tbody>

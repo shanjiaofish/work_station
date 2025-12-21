@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Select from 'react-select';
 import axios from 'axios';
 import { API_BASE } from '../api/config';
+import { normalizeText } from '../utils/textNormalization';
 import './MatchTable.css';
 
 export default function MatchTable({
@@ -122,8 +123,8 @@ export default function MatchTable({
           <th className="col-original">原始名稱</th>
           <th className="col-suggestions">建議材料選擇</th>
           <th className="col-selected">選定名稱</th>
-          <th className="col-unit">單位</th>
           <th className="col-carbon">碳排(kg/CO₂e)</th>
+          <th className="col-unit">單位</th>
         </tr>
       </thead>
       <tbody>
@@ -179,9 +180,9 @@ export default function MatchTable({
                     isClearable
                     filterOption={(option, searchText) => {
                       if (!searchText) return true;
-                      const label = option.label.toLowerCase();
-                      const search = searchText.toLowerCase();
-                      return label.includes(search);
+                      const normalizedLabel = normalizeText(option.label);
+                      const normalizedSearch = normalizeText(searchText);
+                      return normalizedLabel.includes(normalizedSearch);
                     }}
                     menuPlacement="auto"
                     maxMenuHeight={200}
@@ -202,8 +203,8 @@ export default function MatchTable({
                 </div>
               </td>
               <td>{current?.name || current?.material_name || ''}</td>
-              <td>{current?.unit || current?.declaration_unit || ''}</td>
               <td>{current?.carbon || current?.carbon_footprint || ''}</td>
+              <td>{current?.unit || current?.declaration_unit || ''}</td>
             </tr>
           );
         })}
